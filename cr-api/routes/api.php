@@ -23,3 +23,5 @@ Route::get('games/{id}', 'ApiController@getGame');
 Route::post('games', 'ApiController@createGame');
 Route::put('games/{id}', 'ApiController@updateGame');
 Route::delete('games/{id}', 'ApiController@deleteGame');
+
+Route::post('jwt', 'AuthController@jwt');

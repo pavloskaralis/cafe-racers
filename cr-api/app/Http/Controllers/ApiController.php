@@ -6,12 +6,11 @@ use Illuminate\Http\Request;
 
 use App\Game;
 
-class ApiController extends Controller
-{
+class ApiController extends Controller{
     public function getAllGames() {
         $games = Game::get()->toJson(JSON_PRETTY_PRINT);
         return response($games, 200);
-      }
+    }
   
     public function createGame(Request $request) {
     $game = new Game; 
