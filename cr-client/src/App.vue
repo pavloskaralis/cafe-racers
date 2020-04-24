@@ -21,7 +21,10 @@ export default {
    overflow: hidden;
  }
  .app {
-   height: 100vh;
-   width: 100vw;  
+    height: 100vh;
+    width: 100vw;  
+    background-color: $coffee;
+  //  display: flex;
+  //  flex-direction: column;
   }
 </style>
