@@ -21,38 +21,41 @@ export default {
   components: {
     "app-button": Button
   },
-   data() {
-    return {
-      id: ''
+  computed: {
+    id () {
+      return this.$store.state.id; 
     }
   },
   methods: {
-    async fetchJWT() {
-      //request variables
-      const token = localStorage.getItem("cafe-racers"); 
-      const url = "http://localhost:8000/api/jwt"; 
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-      //request/data assignment 
-      const response = await this.$axios.get(url,config);
-      const jwt = response.data.jwt;
-      if(jwt) localStorage.setItem("cafe-racers",jwt);
-      this.id = response.data.id; 
-      console.log("id",this.id)
-      // console.log("jwt",this.jwt)
+    async getIpsum () {
+        const hipsterQuery = "https://hipsum.co/api/?type=hipster-centric&sentences=3";
+        const hipsterResponse = await this.$axios.get(hipsterQuery);
+        const hipsterText = hipsterResponse.data[0];
+        return hipsterText; 
     },
-    twoPlayer () {
-      this.$router.push("/2-player/test");
+    async twoPlayer () {
+    
+      const url = "http://localhost:8000/api/games"; 
+      const request = {
+        "player1": this.id,
+        "api_text": await this.getIpsum(), 
+      }
+  
+      try {
+        const response = await this.$axios.post(url,request);
+        const id = response.data.id; 
+           console.log(id)
+      } catch (e) {
+        console.log(e)
+      }
+     
+     
+      // console.log(id)
+      // this.$router.push(`/2-player/${id}`);
     },
     versusAI () {
       this.$router.push("/versus-ai");
     }
-  },
-  mounted() {
-    this.fetchJWT(); 
   }
 };
 </script>

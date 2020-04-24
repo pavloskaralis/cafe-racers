@@ -18,10 +18,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('games', 'ApiController@getAllGames');
-Route::get('games/{id}', 'ApiController@getGame');
-Route::post('games', 'ApiController@createGame');
-Route::put('games/{id}', 'ApiController@updateGame');
-Route::delete('games/{id}', 'ApiController@deleteGame');
+Route::middleware('cors')->get('games', 'ApiController@getAllGames');
+Route::middleware('cors')->get('games/{id}', 'ApiController@getGame');
+Route::middleware('cors')->post('games', 'ApiController@createGame');
+Route::middleware('cors')->put('games/{id}', 'ApiController@updateGame');
+Route::middleware('cors')->delete('games/{id}', 'ApiController@deleteGame');
 
-Route::get('jwt', 'AuthController@jwt');
+Route::middleware('cors')->get('jwt', 'AuthController@jwt');

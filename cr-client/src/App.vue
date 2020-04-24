@@ -1,8 +1,19 @@
+
 <template>
    <div class="app">
     <router-view />
   </div>
 </template>
+
+<script>
+export default {
+  name: "app",
+  mounted () {
+    this.$store.dispatch('checkID');
+  }
+}
+
+</script>
 
 <style lang="scss">
  body {
