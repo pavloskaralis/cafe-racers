@@ -55,7 +55,8 @@
         width: 100%;
         text-align: right;
         line-height: 96px;
-
+        cursor: default;
+        
         @media(max-width: $breakpointA) {
           font-size: 128px;
           line-height: 88px;
