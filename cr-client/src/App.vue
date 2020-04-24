@@ -9,7 +9,7 @@
 export default {
   name: "app",
   mounted () {
-    this.$store.dispatch('checkID');
+    this.$store.dispatch('checkUser');
   }
 }
 
