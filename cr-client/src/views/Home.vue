@@ -21,23 +21,14 @@ export default {
   components: {
     "app-button": Button
   },
-  data() {
-    return {
-      jwt: ''
-    }
-  },
   methods: {
-    async fetchJWT() {
-      const response = await this.$axios.get();
-      this.jwt = await response;
-    },
     twoPlayer () {
       this.$router.push("/2-player/test");
     },
     versusAI () {
       this.$router.push("/versus-ai");
     }
-  }
+  },
 };
 </script>
 

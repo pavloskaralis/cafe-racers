@@ -14,6 +14,7 @@ class AuthController extends Controller
   
     public function jwt()
     {
+        
         if ( !$token = JWTAuth::getToken() ) {
             $random = strval(rand(1000000,9999999));
             $payload = JWTFactory::sub($random)->make();
@@ -21,12 +22,12 @@ class AuthController extends Controller
 
             return [
                 'jwt' => "{$token}",
-                'player' => "{$random}"
+                'id' => "{$random}"
             ];
         }
 
         $payload = JWTAuth::getPayload($token)->toArray();
-        return ['player' => $payload["sub"]]; 
+        return ['id' => $payload["sub"]]; 
  
     }
 
