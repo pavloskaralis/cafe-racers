@@ -29,6 +29,8 @@ export default {
     position: absolute;
     width: 100%;
     height: 100%;
+    min-height: 600px;
+
     // background-color: orange; 
 
     .player-container {
@@ -38,6 +40,7 @@ export default {
       margin:0 auto;
       display: flex;
       justify-content: space-between;
+      min-height: 402px;
       // background-color: red; 
     }
 
@@ -47,6 +50,7 @@ export default {
       box-sizing: border-box;
       padding: 28px;
       padding-top: 16px;
+      min-height: 198px;
       // background-color: blue; 
 
       .text-body {
@@ -56,6 +60,7 @@ export default {
         height: 100%;
         border-radius: 24px; 
         margin: 0 auto;
+        min-height: 154px; 
       }
     }
   }

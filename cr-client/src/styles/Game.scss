@@ -1,7 +1,8 @@
 .game {
     width: 100%;
     height: 100%;
-  
+    min-height: 600px;
+
     .game-background {
       position:absolute;
       background-image: url("../assets/game-background.jpg");
@@ -11,7 +12,7 @@
       height: 50%;
       width: 100%;
       top: 0; 
-
+      min-height: 300px;
     }
 
     .background-overlay {
@@ -24,13 +25,17 @@
         rgba($dark-blue, 0) 20%,
         rgba($dark-blue, 1) 55%
       );
+      min-height: 600px;
     }
 
     .table-container {
         @extend .vertical-align;
         position: absolute;
-        bottom: 0;   
+        top: 0; 
+        justify-content: flex-end; 
         width: 100%;
+        min-height: 600px;
+        height: 100vh; 
 
       .table {
         height: 25vh;
@@ -40,12 +45,14 @@
         background-position: bottom;
         background-size: cover;
         background-repeat: no-repeat;
+        min-height: 150px;
       }
 
       .table-extension {
         height: 33vh;
         width: 100%;
         background-color: $brown;
+        min-height: 198px;
       }
 
     }

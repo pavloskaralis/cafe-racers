@@ -18,10 +18,12 @@ export default {
 <style lang="scss">
  body {
    margin: 0;
-   overflow: hidden;
+  //  overflow: hidden;
+   min-height: 600px; 
  }
  .app {
     height: 100vh;
-    width: 100vw;  
+    width: 100vw; 
+    min-height: 600px;
   }
 </style>
