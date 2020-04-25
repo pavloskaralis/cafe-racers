@@ -23,8 +23,5 @@ export default {
  .app {
     height: 100vh;
     width: 100vw;  
-    background-color: $coffee;
-  //  display: flex;
-  //  flex-direction: column;
   }
 </style>

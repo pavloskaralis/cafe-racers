@@ -28,7 +28,6 @@ export default {
             opacity: 1;
         }
         
-
     }
 
     .home-button {

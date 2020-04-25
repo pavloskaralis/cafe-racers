@@ -21,18 +21,16 @@
       height: 100%;
       background-image: linear-gradient(
         180deg, 
-        rgba($white, 0) 20%,
-        rgba($white, 1) 55%
+        rgba($dark-blue, 0) 20%,
+        rgba($dark-blue, 1) 55%
       );
     }
 
     .table-container {
         @extend .vertical-align;
         position: absolute;
-        bottom: 0;
-    
+        bottom: 0;   
         width: 100%;
-        box-shadow: 0 0 15px 0 rgba(black,.5);
 
       .table {
         height: 25vh;
