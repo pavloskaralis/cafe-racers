@@ -50,6 +50,12 @@ export default {
         @media(max-width: $breakpointE) {
             font-size: 24px;  
         }
+        @media(max-width: $breakpointF) {
+            font-size: 20px;   
+        }
+        @media(max-width: $breakpointG) {
+            font-size: 16px;  
+        }
 
         .button-text {
             @extend .vertical-align; 
@@ -71,6 +77,7 @@ export default {
             @media(max-width: $breakpointE) {
                 margin-right: 12px; 
             }
+
         }
     }
 
