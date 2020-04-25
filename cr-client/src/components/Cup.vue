@@ -4,7 +4,7 @@
 
      </div>
      <div class="empty-cup"> 
-         <div class="full-cup" style="clip-path: clipPath;"></div>
+         <div class="full-cup" :style="{'clip-path': clipPath}"></div>
      </div>
      <div class="player-text"> 
 
@@ -19,7 +19,7 @@ export default {
   props: ["state"],
   computed: {
       clipPath () {
-          return "polygon(100% 10%, 100% 100%, 0 100%, 0 10%)";
+          return "polygon(100% 40%, 100% 100%, 0 100%, 0 40%)";
       }
   }
 };
@@ -36,11 +36,10 @@ export default {
         @extend .vertical-align;
         width: 100%;
         height: 100%;
-        flex-shrink: 2;
-
-        background: blue;
-        @media(max-width: $breakpointC){
-            flex-shrink: 1;
+        // flex-shrink: 1.5;
+        // background: blue;
+        @media(max-width: 700px){
+            // flex-shrink: 1;
         }
     }
 
@@ -50,13 +49,38 @@ export default {
         background-size: contain; 
         background-repeat: no-repeat;
         background-position: bottom;
-        height: 100%;
-        // max-height: 347px; 
+        height: 30vh;
+        max-height: 280px;
         // background-color: pink;
+
+        @media(max-width: $breakpointA) {
+            // max-height: 48px; 
+        }
+        @media(max-width: $breakpointB) {
+            max-height: 255px; 
+        }
+        @media(max-width: $breakpointC) {
+            max-height: 190px; 
+        }
+        @media(max-width: $breakpointD) {
+            max-height: 170px; 
+        }
+        @media(max-width: $breakpointE) {
+            max-height: 135px;
+        }
+        @media(max-width: 410px) {
+            max-height: 110px;
+        }
+        @media(max-width: 325px) {
+            max-height: 90px;
+        }
+
+
         .full-cup {
             @extend .empty-cup;
-            height: 100%;
-            background-image: url("../assets/coffee.png");          
+            background-image: url("../assets/coffee.png"); 
+            transition: clip-path .5s;  
+            // clip-path: polygon(100% 80%, 100% 100%, 0 100%, 0 80%);      
         }
     }
     
