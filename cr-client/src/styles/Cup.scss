@@ -21,43 +21,46 @@
          border: 8px solid darken($red,15%);
 
          @media(max-width: $breakpointB) {
-             font-size: 52px;    
-            
-             border: 7.5px solid darken($red,15%);
+            font-size: 52px;    
+            padding: 8px 43px;
+            padding-right: 52px;
+            border: 7.4px solid darken($red,15%);
          }
          @media(max-width: $breakpointC) {
              font-size: 36px;    
-             padding: 8px 44px;
-             padding-right: 52px;
-             border: 7px solid darken($red,15%); 
+             padding: 8px 38px;
+             padding-right: 46px;
+             border: 6.8px solid darken($red,15%); 
          }
          @media(max-width: $breakpointD) {
              font-size: 28px; 
-             border: 6.5px solid darken($red,15%);              
+             padding: 8px 33px;
+             padding-right: 40px;
+             border: 6.2px solid darken($red,15%);              
          }
          @media(max-width: $breakpointE) {
              font-size: 22px;  
-             padding: 8px 36px;
-             padding-right: 40px;
-             border: 6px solid darken($red,15%);   
+             padding: 8px 28px;
+             padding-right: 34px;
+             border: 5.6px solid darken($red,15%);   
          }
          @media(max-width: $breakpointF) {
              font-size: 18px;  
-             padding: 8px 28px;
-             padding-right: 30px;
+             padding: 8px 23px;
+             padding-right: 28px;
              border: 5px solid darken($red,15%);      
          }
          @media(max-width: $breakpointG) {
              font-size: 14px;   
              padding: 8px 18px;
-             padding-right: 24px;
-             border: 4px solid darken($red,15%);             
+             padding-right: 22px;
+             border: 4.4px solid darken($red,15%);             
          }
          @media(max-height: $breakpointC) and (min-width: $breakpointC) {
              font-size: 36px;    
-             padding: 8px 48px;
-             padding-right: 56px;
-             border: 7px solid darken($red,15%);
+             padding: 8px 38px;
+             padding-right: 46px;
+             border: 6.8px solid darken($red,15%);
          }
  }
  .winner-wrap {
@@ -166,8 +169,8 @@
      min-height: 81px; 
      height: 60%;
    
-     @media(max-width: $breakpointE) {
-         height: 40%;
+     @media(max-width: $breakpointC) {
+         height: 45%;
      }
     
  }
