@@ -7,7 +7,9 @@
 
     <div class="text-container"> 
       <div class="text-body"> 
-
+        <span :key="index" v-for="(word,index) in text" class="text-word"> 
+            <letter :key="index" v-for="(letter, index) in word.split('')" :letter="letter"></letter>
+        </span>
       </div>
     </div>
   </div>
@@ -16,11 +18,29 @@
 <script>
 // @ is an alias to /src
 import Cup from "./Cup"
+import Letter from "./Letter"
 
 export default {
   name: "versus-ai",
   components: {
-    "cup": Cup
+    "cup": Cup,
+    "letter": Letter
+  },
+  computed: {
+      text: () => {
+       let original = "Bushwick migas authentic bespoke, jianbing letterpress church-key cardigan godard paleo photo booth XOXO. Post-ironic prism ramps cornhole flannel iPhone 90's kogi you probably haven't heard of them drinking vinegar venmo cardigan intelligentsia. Retro tattooed listicle beard, chillwave bicycle rights mustache roof party chambray YOLO put a bird on it 90's schlitz.".split(" ")
+        let text = [];
+
+        for(let i = 0; i < original.length; i++) {
+          text.push(original[i]);
+          if(i === original.legngth - 1) break; 
+          text.push(" ");
+        }
+        return text;
+      }
+  },
+  mounted() {
+    console.log("test", this.text)
   }
 };
 </script>
@@ -48,7 +68,7 @@ export default {
       height: 33%;
       width: 100%;
       box-sizing: border-box;
-      padding: 28px;
+      padding: 24px;
       padding-top: 16px;
       min-height: 198px;
       // background-color: blue; 
@@ -61,6 +81,17 @@ export default {
         border-radius: 24px; 
         margin: 0 auto;
         min-height: 154px; 
+        box-sizing: border-box;
+        padding: 20px 12px 8px 28px;
+        overflow: auto;
+        -ms-overflow-style: none;
+        display: flex;
+        flex-wrap: wrap;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+
       }
     }
   }
