@@ -13,29 +13,29 @@ class ApiController extends Controller{
     }
   
     public function createGame(Request $request) {
-        $game = new Game; 
+    $game = new Game; 
 
-        $game->player1 = $request->player1;
-        $game->player2 = $request->player2;
-        $game->api_text = $request->api_text;
-        $game->p1_text = $request->p1_text;
-        $game->p2_text = $request->p2_text;
-        $game->p1_completion = $request->p1_completion;
-        $game->p2_completion = $request->p2_completion;
-        $game->p1_speed = $request->p1_speed;
-        $game->p2_speed = $request->p2_speed;
-        $game->p1_time = $request->p1_time;
-        $game->p2_time = $request->p2_time;
-        $game->p1_again = $request->p1_again;
-        $game->p2_again = $request->p2_again;
+    $game->player1 = $request->player1;
+    $game->player2 = $request->player2;
+    $game->api_text = $request->api_text;
+    $game->p1_text = $request->p1_text;
+    $game->p2_text = $request->p2_text;
+    $game->p1_completion = $request->p1_completion;
+    $game->p2_completion = $request->p2_completion;
+    $game->p1_speed = $request->p1_speed;
+    $game->p2_speed = $request->p2_speed;
+    $game->p1_time = $request->p1_time;
+    $game->p2_time = $request->p2_time;
+    $game->p1_again = $request->p1_again;
+    $game->p2_again = $request->p2_again;
 
 
-        $game->save();
+    $game->save();
 
-        return response()->json([
-            "message" => "game created",
-            "id" => $game->id,
-        ]);
+    return response()->json([
+        "message" => "game created",
+        "id" => $game->id,
+    ]);
     }
 
     public function getGame($id) {
