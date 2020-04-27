@@ -40,7 +40,6 @@
         },
         mounted () {
           this.setActiveView();
-          console.log(this.$store.state.id !== "")
         }
     }
 </script>

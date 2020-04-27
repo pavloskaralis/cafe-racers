@@ -1,5 +1,5 @@
 <template>
-  <span class="letter-container" >
+  <span class="letter-container" :style="style">
     {{letter}}
   </span>
 </template>
@@ -8,8 +8,16 @@
 
 export default {
   name: "letter",
-  props: ["state","letter"]
-  
+  props: ["state","letter"],
+  computed: {
+    style() {
+        return {
+            active: {},
+            inactive: {opacity: '.5'},
+            current: {backgroundColor: 'rgb(0,165,255)'}
+        }[this.state]
+    }
+  }
 };
 </script>
 <style scoped lang="scss">
@@ -18,7 +26,6 @@ export default {
         flex-direction: column;
         justify-content: center; 
         font-family: $fontB; 
-        color: $dark-blue; 
         -webkit-text-stroke: $dark-blue 1px;
         font-size: 28px; 
         padding: 0 3px; 

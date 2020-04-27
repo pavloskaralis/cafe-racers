@@ -1,5 +1,5 @@
 <template>
-  <div class="button" :class="[type]"  @click="$emit('clicked');">
+  <div class="button" :class="[type]"  @click="$emit('clicked', text);">
         <div class="button-text">{{ text }}</div>
         <div class="button-pointer">&#9664;</div>
   </div>
