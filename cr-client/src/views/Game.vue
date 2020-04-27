@@ -6,7 +6,7 @@
           <div class="table"></div>
           <div class="table-extension"></div>
       </div>
-      <component :is="activeView"/>
+      <component v-if="id" :is="activeView"/>
   </div>
 </template>
  
@@ -27,6 +27,11 @@
             activeView: ''
           }
         },
+        computed: {
+          id () {
+            return this.$store.state.id;
+          }
+        },
         methods: {
           setActiveView () {
             let path = this.$route.path; 
@@ -35,6 +40,7 @@
         },
         mounted () {
           this.setActiveView();
+          console.log(this.$store.state.id !== "")
         }
     }
 </script>

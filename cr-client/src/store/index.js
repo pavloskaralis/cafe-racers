@@ -6,15 +6,15 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    user: ''
+    id: ''
   },
   mutations: {
-    setUser (state, payload) {
-        state.user = payload;
+    setID (state, payload) {
+        state.id = payload;
     }
   },
   actions: {
-    async checkUser (context) {
+    async checkID (context) {
 
       const token = localStorage.getItem("cafe-racers"); 
       const url = "http://localhost:8000/api/jwt"; 
@@ -25,10 +25,10 @@ export default new Vuex.Store({
       }
    
       const response = await axios.get(url,config);
-      const jwt = await response.data.jwt;
+      const jwt = response.data.jwt;
       if(jwt) localStorage.setItem("cafe-racers",jwt);
-      const user = response.data.user; 
-      context.commit('setUser', user);
+      const id = response.data.id; 
+      context.commit('setID', id);
     }
 
   },

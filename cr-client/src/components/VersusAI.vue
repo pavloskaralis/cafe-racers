@@ -1,17 +1,32 @@
 <template>
   <div class="game-pieces">
+    
     <div class="player-container"> 
       <cup :state="p1Cup"></cup>
       <cup :state="p2Cup"></cup>
     </div>
 
     <div class="text-container"> 
+      <div v-if="prompt" class="prompt-container" >
+        <div class="prompt-body">
+            <div class="prompt-question">
+              {{ prompt }}
+            </div>
+            <div class="prompt-options">
+                <app-button type="game-button" :key="index" v-for="(option,index) in promptOptions" :text="option"></app-button>
+            </div>
+        </div>
+      </div>
+
       <div class="text-body"> 
         <span :key="index" v-for="(word,index) in apiWords" class="text-word"> 
             <letter :key="index" v-for="(letter, index) in word.split('')" :letter="letter"></letter>
         </span>
       </div>
+
+      
     </div>
+
   </div>
 </template>
 
@@ -19,15 +34,18 @@
 // @ is an alias to /src
 import Cup from "./Cup"
 import Letter from "./Letter"
+import Button from './Button'
 
 export default {
   name: "versus-ai",
   components: {
     "cup": Cup,
-    "letter": Letter
+    "letter": Letter,
+    "app-button": Button
   },
   data() {
     return {
+      prompt: "Select AI Difficulty",
       player1: "",
       player2: "",
       apiText: "",
@@ -60,12 +78,13 @@ export default {
     p2Completion () {
       return this.p2Text ? this.p2text.length/this.apiText.length : 0;
     },
-    //AI Version
     userIs () {
-      if (this.$store.state.user === this.player1) {
+      if (this.$store.state.id === this.player1) {
         return "player1"
-      } else {
+      } else if (this.$store.state.id === this.player2) {
         return "player2"
+      } else {
+        return "unknown"
       }
     },
     winner () {
@@ -78,6 +97,7 @@ export default {
     },
     p1Cup () {
       return {
+        cup: "left",
         player: this.userIs,
         speed: this.p1Speed,
         completion: this.p1Completion,
@@ -86,11 +106,18 @@ export default {
     },
     p2Cup () {
       return {
-        player: this.userIs,
+        cup: "right",
+        player: this.userIs,  
         speed: this.p2Speed,
         completion: this.p2Completion,
         winner: this.winner
       }
+    },
+    promptOptions () {
+      return {
+        "Select AI Difficulty": ["Easy","Medium","Hard"],
+        "play again": ["Yes","No"]
+      }[this.prompt]
     }
   },
   methods: {
@@ -103,6 +130,8 @@ export default {
   },
   mounted() {
     this.getIpsum(); 
+    this.player1 = this.$store.state.id;  
+    // console.log("id", this.$store.state.id)
   }
 };
 </script>

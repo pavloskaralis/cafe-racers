@@ -22,15 +22,15 @@ export default {
     "app-button": Button
   },
   computed: {
-    user () {
-      return this.$store.state.user 
+    id () {
+      return this.$store.state.id 
     }
   },
   methods: {
     async twoPlayer () {
       const url = "http://localhost:8000/api/games"; 
       const request = {
-        "player1": this.user
+        "player1": this.id
       }
     
       const response = await this.$axios.post(url,request);

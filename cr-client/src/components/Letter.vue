@@ -17,9 +17,9 @@ export default {
         display: inline-flex;
         flex-direction: column;
         justify-content: center; 
-        $font-famiily: $fontB; 
+        font-family: $fontB; 
         color: $dark-blue; 
-        // background: red;
+        -webkit-text-stroke: $dark-blue 1px;
         font-size: 28px; 
         padding: 0 3px; 
         min-width: 11px;
