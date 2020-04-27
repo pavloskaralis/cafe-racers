@@ -31,7 +31,8 @@
             :key="wordIndex + '_' + letterIndex" 
             v-for="(letter, letterIndex) in word.split('')" 
             :letter="letter"
-            :state="getLetterState(wordIndex,letterIndex)"
+            :status="getLetterState(wordIndex,letterIndex)"
+            :isWrong="mistake"
           >
           </letter>
         </span>
@@ -59,6 +60,8 @@ export default {
       prompt: "Select AI Difficulty",
       difficulty: "",
       tracking: false, 
+      currentLetterID: "",
+      mistake: false,
       player1: "",
       player2: "",
       apiText: "",
@@ -159,12 +162,16 @@ export default {
         }, 1000);
     },
     trackInput() {
-      if(this.userIs === "player1") {
-        return null; 
-      } else if (this.userIs === "player2") {
-        return null;
+      let key = event.key;
+      let currentTextLength = this.userIs === "player1" ? this.p1Text.length : this.p2Text.length;
+      let currentLetter = this.apiText[currentTextLength];
+
+      if(key !== currentLetter && key !== "shift") {this.mistake = true;}
+      if(key === currentLetter) { 
+        this.userIs === "player1" ? this.p1Text += key : this.p2Text += key;
+        this.mistake = false; 
       }
-      // console.log("tracking")
+  
     },
     processClick(event) {
       if(["easy","medium","hard"].indexOf(event)!== -1) {
@@ -201,17 +208,19 @@ export default {
         if(wordIndex === lastWordIndex + 1 && letterIndex === 0) state = "current";
         //and all letters in words before the next word are innactive
         if(wordIndex <= lastWordIndex) state = "inactive";
+        this.currentLetter = wordIndex + "_" + letterIndex; 
       //otherwise if the last word is not fully spelled
       } else if(words[lastWordIndex] !== this.apiWords[lastWordIndex]) {
         //the first unexisting letter of the current word is current
         if(wordIndex === lastWordIndex && letterIndex === lastLetterIndex + 1) state = "current";
+        this.currentLetter = wordIndex + "_" + letterIndex; 
         //and all letters in the current word before the current letter are inactive;
         if(wordIndex === lastWordIndex && letterIndex < lastLetterIndex + 1) state = "inactive";
         //as well as all letters in words before the current word
         if(wordIndex < lastWordIndex) state = "inactive";
       }
       return state;
-    },
+    }
   },
   mounted() {
     this.getIpsum(); 

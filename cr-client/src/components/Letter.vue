@@ -8,14 +8,14 @@
 
 export default {
   name: "letter",
-  props: ["state","letter"],
+  props: ["status","letter","isWrong"],
   computed: {
     style() {
         return {
             active: {},
             inactive: {opacity: '.5'},
-            current: {backgroundColor: 'rgb(0,165,255)'}
-        }[this.state]
+            current: {backgroundColor: !this.isWrong ? 'rgb(0,165,255)' : 'rgb(200,0,60)'}
+        }[this.status]
     }
   }
 };
