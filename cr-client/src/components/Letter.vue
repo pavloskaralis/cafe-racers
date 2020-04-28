@@ -24,7 +24,6 @@ export default {
     .letter-container {
         display: inline-flex;
         flex-direction: column;
-        justify-content: center; 
         font-family: $fontB; 
         -webkit-text-stroke: $dark-blue 1px;
         font-size: 28px; 

@@ -1,7 +1,9 @@
 <template>
   <div class="cup-container" >
      <div class="winner-wrap"> 
-         <div class="winner-text" :style="{'opacity': opacity}">Winner!</div>
+         <div class="winner-text" :style="{'opacity': opacity}">
+          {{this.state.winner !== "tie" ? "Winner!" : "Tie!"}}
+        </div>
      </div>
      <div class="empty-cup" :style="{'transform': transform}"> 
         <div class="full-cup" :style="{'clip-path': clipPath}"></div>
@@ -20,7 +22,7 @@ export default {
   props: ["state"],
   computed: {
     clipPath () {
-        return `polygon(100% ${(this.state.completion + 15) * .6}%, 100% 100%, 0 100%, 0 ${(this.state.completion + 15) * .6}%)`;
+        return `polygon(100% ${(this.state.completion * .585) + 11.1}%, 100% 100%, 0 100%, 0 ${(this.state.completion * .585) + 11.1}%)`;
     },
     opacity () {
       return this.state.winner !== this.state.player && this.state.winner !== "tie" ? 0 : 1; 
