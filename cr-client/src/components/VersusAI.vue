@@ -180,7 +180,6 @@ export default {
       setTimeout(()=> {
         this.prompt = "";
         this.tracking = true;
-        // this.startAI(); 
         let date = Date.now()/1000;
        
         this.time = date;
@@ -281,7 +280,7 @@ export default {
     this.getIpsum(); 
   },
   updated() {
-    console.log("updating")
+    // console.log("updating")
   }
 };
 </script>

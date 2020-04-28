@@ -14,6 +14,7 @@
             </div>
             <div  v-if="promptOptions" class="prompt-options">
               <app-button 
+                :id="'button' + index"
                 type="game-button" 
                 :key="index" 
                 v-for="(option,index) in promptOptions" 
@@ -60,7 +61,7 @@ export default {
   data() {
     return {
       prompt: "Click Link To Copy",
-      url: "",
+      link: "",
       tracking: false, 
       currentLetterID: "",
       mistake: false,
@@ -80,6 +81,9 @@ export default {
         this.tracking = false;
         this.prompt = "Play Again?"; 
       }
+    },
+    player2 () {
+      if(this.player2) this.startGame();
     }
   },
   computed: {
@@ -158,7 +162,8 @@ export default {
     promptOptions () {
       return {
         "Select AI Difficulty": ["easy","medium","hard"],
-        "Play Again?": ["yes","no"]
+        "Play Again?": ["yes","no"],
+        "Click Link To Copy": [this.link]
       }[this.prompt]
     }
   },
@@ -174,12 +179,12 @@ export default {
     async getGame() {
       let path = this.$route.path; 
       let id = path.split("/")[2];
-  
-      this.url = `http://localhost:8000/api/games/${id}`; 
+      let url = `http://localhost:8000/api/games/${id}`; 
+
       // const request = {
       //   "player1": this.id
       // }
-      const response = await this.$axios.get(this.url);
+      const response = await this.$axios.get(url);
       const data = response.data[0]
       if(data.p1_again)this.p1Again = data.p1_again;
       if(data.p1_text)this.p1Text = data.p1_text;
@@ -189,9 +194,8 @@ export default {
       if(data.player2)this.player2 = data.player2;
       if(data.time)this.time = data.time;
       if(data.apiText)this.apiText = data.apiText;
+      this.link = `http://localhost:8080/2-player/${id}`; 
 
-      console.log(data); 
-      // this.$router.push(`/2-player/${id}`);
     },
     startGame() {
      for (let i = 5; i > 0; i--) {
@@ -225,6 +229,8 @@ export default {
         this.setDifficulty(event)
       } else if (["yes","no"].indexOf(event)!== -1) {
         this.setNext(event);
+      } else if ([this.link].indexOf(event)!== -1) {
+        this.copyLink();
       }
     },
     setDifficulty(level) {
@@ -250,6 +256,16 @@ export default {
       } else if (choice === "no") {
         this.$router.push("/");
       }
+    },
+
+    copyLink () {
+      let text = document.getElementById("button0").children[0].textContent;
+      let inp =document.createElement('input');
+      document.body.appendChild(inp)
+      inp.value = text; 
+      inp.select();
+      document.execCommand('copy',false);
+      inp.remove(); 
     },
     getLetterState (wordIndex, letterIndex) {
       //default
