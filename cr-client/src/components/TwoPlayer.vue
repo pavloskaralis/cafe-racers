@@ -28,6 +28,7 @@
       <div class="text-body" id="text-body"> 
         <span :key="wordIndex" v-for="(word,wordIndex) in apiWords" class="text-word"> 
           <letter 
+            :v-if="apiText"
             :key="wordIndex + '_' + letterIndex" 
             :id="wordIndex + '_' + letterIndex" 
             v-for="(letter, letterIndex) in word.split('')" 
@@ -58,19 +59,19 @@ export default {
   },
   data() {
     return {
-      prompt: "Select AI Difficulty",
-      difficulty: "",
+      prompt: "Click Link To Copy",
+      url: "",
       tracking: false, 
       currentLetterID: "",
       mistake: false,
       player1: "",
-      ai: "",
       player2: "",
       apiText: "",
       p1Text: "",
       p2Text: "",
-      p1Time: 0,
-      p2Time: 0,
+      p1Again: false,
+      p2Again: false,
+      time: 0    
     }
   },
   watch: {
@@ -79,26 +80,14 @@ export default {
         this.tracking = false;
         this.prompt = "Play Again?"; 
       }
-    },
-    //AI version
-    tracking () {
-      if(this.tracking) {
-        let totalWords = this.apiWords.length;
-        let random = Math.round(Math.random() * 5);
-        let time = 60/(this.difficulty + random) * totalWords * 1000
-        this.ai = setTimeout(()=> {
-          this.p2Text += this.apiText; 
-        }, time); 
-      } else {
-        clearTimeout(this.ai)
-      }
-   
-    },
+    }
   },
   computed: {
     apiWords () {
       const apiWords = []; 
-      const apiTextSplit = this.apiText.split(" ");
+      if (!this.apiText) return apiWords; 
+
+      const apiTextSplit =  this.apiText.split(" ");
       for(let i = 0; i < apiTextSplit.length; i++) {
         if(i !== apiTextSplit.length - 1) apiTextSplit[i] += " ";
         apiWords.push(apiTextSplit[i]);
@@ -106,18 +95,18 @@ export default {
       return apiWords; 
     },
     p1Speed () {
-      if (this.p1Text && this.p1Time) { 
+      if (this.p1Text && this.time) { 
         let newTime = Date.now()/1000; 
-        let difference = newTime - this.p1Time;
+        let difference = newTime - this.time;
 
         return  Math.round(this.p1Text.split(" ").length/difference * 60)
       }
       return 0;
     },
     p2Speed () {
-      if (this.p2Text && this.p2Time) { 
+      if (this.p2Text && this.time) { 
         let newTime = Date.now()/1000; 
-        let difference = newTime - this.p2Time;
+        let difference = newTime - this.time;
 
         return  Math.round(this.p2Text.split(" ").length/difference * 60)
       }
@@ -150,7 +139,7 @@ export default {
     p1Cup () {
       return {
         cup: "left",
-        player: this.userIs,
+        player: this.player1 ? this.userIs : "empty",  
         speed: this.p1Speed,
         completion: this.p1Completion,
         winner: this.winner
@@ -160,7 +149,7 @@ export default {
       return {
         cup: "right",
         //AI Version
-        player: "AI",  
+        player: this.player2 ? this.userIs : "empty",  
         speed: this.p2Speed,
         completion: this.p2Completion,
         winner: this.winner
@@ -182,20 +171,42 @@ export default {
       this.apiText = "q w e r t y q w e r t y"
       // this.apiText= "aaaaaaaaaaaaaaaaaaaaa sssssssssssssssssss ddddddddddddddddddddd ffffffffffffffffff"
     },
-    startGame() {
-      // for (let i = 4; i > 0; i--) {
-      //   setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [3,2,1,0][i-1])
+    async getGame() {
+      let path = this.$route.path; 
+      let id = path.split("/")[2];
+  
+      this.url = `http://localhost:8000/api/games/${id}`; 
+      // const request = {
+      //   "player1": this.id
       // }
+      const response = await this.$axios.get(this.url);
+      const data = response.data[0]
+      if(data.p1_again)this.p1Again = data.p1_again;
+      if(data.p1_text)this.p1Text = data.p1_text;
+      if(data.player1)this.player1 = data.player1;
+      if(data.p2_again)this.p2Again = data.p2_again;
+      if(data.p2_text)this.p2Text = data.p2_text;
+      if(data.player2)this.player2 = data.player2;
+      if(data.time)this.time = data.time;
+      if(data.apiText)this.apiText = data.apiText;
+
+      console.log(data); 
+      // this.$router.push(`/2-player/${id}`);
+    },
+    startGame() {
+     for (let i = 5; i > 0; i--) {
+        setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [4,3,2,1,0][i-1])
+      }
       setTimeout(()=> {
         this.prompt = "";
         this.tracking = true;
         // this.startAI(); 
         let date = Date.now()/1000;
        
-        this.p1Time = date;
-        this.p2Time = date; 
+        this.time = date;
+        this.time = date; 
 
-      }, 0);
+      }, 5000);
     },
     
     trackInput() {
@@ -233,8 +244,8 @@ export default {
         this.currentLetterID = "";
         this.p1Text = "";
         this.p2Text = "";
-        this.p1Time = 0;
-        this.p2Time = 0;
+        this.time = 0;
+        this.time = 0;
         this.getIpsum(); 
       } else if (choice === "no") {
         this.$router.push("/");
@@ -244,7 +255,7 @@ export default {
       //default
       let state = "active"
       //get all words of client
-      const splitText = this.userIs === "player1" ? this.p1Text.split(" ") : this.p2Text.split(" ");
+      let splitText = this.userIs === "player1" ? this.p1Text.split(" ") : this.p2Text.split(" ");
       //add spaces to match api words
       const words = []; 
       for(let i = 0; i < splitText.length; i++) {
@@ -287,9 +298,9 @@ export default {
     }
   },
   mounted() {
-    this.getIpsum(); 
-    //AI Version
-    this.player1 = this.$store.state.id;  
+    this.getGame();
+    if(!this.apiText)this.getIpsum();  
+    // this.player1 = this.$store.state.id
   },
   updated() {
     // console.log("updating")

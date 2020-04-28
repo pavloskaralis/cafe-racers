@@ -67,8 +67,7 @@ export default {
       apiText: "",
       p1Text: "",
       p2Text: "",
-      p1Time: 0,
-      p2Time: 0,
+      time: 0
     }
   },
   watch: {
@@ -106,18 +105,18 @@ export default {
       return apiWords; 
     },
     p1Speed () {
-      if (this.p1Text && this.p1Time) { 
+      if (this.p1Text && this.time) { 
         let newTime = Date.now()/1000; 
-        let difference = newTime - this.p1Time;
+        let difference = newTime - this.time;
 
         return  Math.round(this.p1Text.split(" ").length/difference * 60)
       }
       return 0;
     },
     p2Speed () {
-      if (this.p2Text && this.p2Time) { 
+      if (this.p2Text && this.time) { 
         let newTime = Date.now()/1000; 
-        let difference = newTime - this.p2Time;
+        let difference = newTime - this.time;
 
         return  Math.round(this.p2Text.split(" ").length/difference * 60)
       }
@@ -184,8 +183,8 @@ export default {
         // this.startAI(); 
         let date = Date.now()/1000;
        
-        this.p1Time = date;
-        this.p2Time = date; 
+        this.time = date;
+        this.time = date; 
 
       }, 5000);
     },
@@ -224,8 +223,8 @@ export default {
         this.mistake = false; 
         this.p1Text = "";
         this.p2Text = "";
-        this.p1Time = 0;
-        this.p2Time = 0;
+        this.time = 0;
+        this.time = 0;
         document.getElementById('text-body').scrollTop = 0;
         this.getIpsum(); 
       } else if (choice === "no") {

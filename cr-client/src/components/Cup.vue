@@ -32,6 +32,8 @@ export default {
         return "You"
       } else if (this.state.cup === "right" && this.state.player === "player2"){
         return "You"
+      } else if (this.state.player === "empty"){
+        return "Empty"
       } else {
         return "Them"
       }

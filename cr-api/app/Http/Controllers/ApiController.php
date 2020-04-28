@@ -24,8 +24,7 @@ class ApiController extends Controller{
     $game->p2_completion = $request->p2_completion;
     $game->p1_speed = $request->p1_speed;
     $game->p2_speed = $request->p2_speed;
-    $game->p1_time = $request->p1_time;
-    $game->p2_time = $request->p2_time;
+    $game->time = $request->time;
     $game->p1_again = $request->p1_again;
     $game->p2_again = $request->p2_again;
 
@@ -63,8 +62,7 @@ class ApiController extends Controller{
             $game->p2_completion = is_null($request->p2_completion) ? $game->p2_completion : $request->p2_completion;
             $game->p1_speed = is_null($request->p1_speed) ? $game->p1_speed : $request->p1_speed;
             $game->p2_speed = is_null($request->p2_speed) ? $game->p2_speed : $request->p2_speed;
-            $game->p1_time = is_null($request->p1_time) ? $game->p1_time : $request->p1_time;
-            $game->p2_time = is_null($request->p2_time) ? $game->p2_time : $request->p2_time;
+            $game->time = is_null($request->time) ? $game->time : $request->time;
             $game->p1_again = is_null($request->p1_again) ? $game->p1_again : $request->p1_again;
             $game->p2_again = is_null($request->p2_again) ? $game->p2_again : $request->p2_again;
 
