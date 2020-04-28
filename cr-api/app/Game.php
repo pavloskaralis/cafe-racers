@@ -14,6 +14,6 @@ class Game extends Model
         'p1_completion','p2_completion',
         'p1_speed','p2_speed',
         'p1_again','p2_again',
-        'time'
+        'time','tracking'
     ];
 }

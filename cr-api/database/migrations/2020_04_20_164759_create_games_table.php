@@ -26,6 +26,7 @@ class CreateGamesTable extends Migration
             $table->integer('p1_speed')->nullable();
             $table->integer('p2_speed')->nullable(); 
             $table->integer('time')->nullable();
+            $table->boolean('tracking')->nullable();
             $table->boolean('p1_again')->nullable();
             $table->boolean('p2_again')->nullable();
         });
