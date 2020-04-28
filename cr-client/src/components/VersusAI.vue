@@ -63,8 +63,7 @@ export default {
       tracking: false, 
       currentLetterID: "",
       mistake: false,
-      player1: "",
-      player2: "",
+      ai: "",
       apiText: "",
       p1Text: "",
       p2Text: "",
@@ -74,8 +73,27 @@ export default {
   },
   watch: {
     winner () {
-      if(this.winner) this.prompt = "Play Again?"; 
-    }
+      if(this.winner) {
+        this.tracking = false;
+        this.prompt = "Play Again?"; 
+      }
+    },
+    //AI version
+    tracking () {
+      if(this.tracking) {
+        let totalWords = this.apiWords.length;
+        let totalLetters = this.apiText.length; 
+        let random = Math.round(Math.random() * 5);
+        let time = (60/(this.difficulty + random) * totalWords)/totalLetters * 1000
+        let i = 0; 
+        this.ai = setInterval( ()=> {
+          this.p2Text += this.apiText[i]
+          i++
+        }, time);
+      } else {
+        clearInterval(this.ai)
+      }
+    },
   },
   computed: {
     apiWords () {
@@ -88,10 +106,22 @@ export default {
       return apiWords; 
     },
     p1Speed () {
-      return this.p1Text && this.p1Time ? Math.round(this.p1Text.split(" ").length/this.p1Time * 60) : 0;
+      if (this.p1Text && this.p1Time) { 
+        let newTime = Date.now()/1000; 
+        let difference = newTime - this.p1Time;
+
+        return  Math.round(this.p1Text.split(" ").length/difference * 60)
+      }
+      return 0;
     },
     p2Speed () {
-      return this.p2Text && this.p2Time ? Math.round(this.p2Text.split(" ").length/this.p2Time * 60) : 0;
+      if (this.p2Text && this.p2Time) { 
+        let newTime = Date.now()/1000; 
+        let difference = newTime - this.p2Time;
+
+        return  Math.round(this.p2Text.split(" ").length/difference * 60)
+      }
+      return 0;    
     },
     p1Completion () {
       return this.p1Text ? this.p1Text.length/this.apiText.length * 100 : 0;
@@ -99,15 +129,7 @@ export default {
     p2Completion () {
       return this.p2Text ? this.p2Text.length/this.apiText.length * 100 : 0;
     },
-    userIs () {
-      if (this.$store.state.id === this.player1) {
-        return "player1"
-      } else if (this.$store.state.id === this.player2) {
-        return "player2"
-      } else {
-        return "unknown"
-      }
-    },
+
     winner () {
       if(this.p1Completion === 100 || this.p2Completion === 100) {
         if(this.p1Completion === 100 && this.p2Completion === 100 ) return "tie";
@@ -120,7 +142,7 @@ export default {
     p1Cup () {
       return {
         cup: "left",
-        player: this.userIs,
+        player: "player1",
         speed: this.p1Speed,
         completion: this.p1Completion,
         winner: this.winner
@@ -149,46 +171,32 @@ export default {
       const hipsterResponse = await this.$axios.get(hipsterQuery);
       const hipsterText = hipsterResponse.data[0];
       this.apiText = hipsterText;
-      // this.apiText= "short easy sentence"
+      // this.apiText = "q w e r t y q w e r t y q w e r t y q w e r t y"
+      // this.apiText= "aaaaaaaaaaaaaaaaaaaaa sssssssssssssssssss ddddddddddddddddddddd ffffffffffffffffff"
     },
     startGame() {
-      for (let i = 4; i > 0; i--) {
-        setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [3,2,1,0][i-1])
+      for (let i = 5; i > 0; i--) {
+        setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [4,3,2,1,0][i-1])
       }
       setTimeout(()=> {
         this.prompt = "";
         this.tracking = true;
-        this.startAI(); 
-        let interval = setInterval( ()=> {
-          this.p1Time += 1;
-          this.p2Time += 1;
-          if(this.winner) clearInterval(interval);
-        }, 1000);
-      }, 4000);
-    },
-    startAI () {
-      let totalTime = 0; 
-      let totalWords = this.apiWords.length;
-      let totalLetters = this.apiText.length; 
-      let lettersPerWord = totalLetters/totalWords;
+        // this.startAI(); 
+        let date = Date.now()/1000;
+       
+        this.p1Time = date;
+        this.p2Time = date; 
 
-      for(let i = 0; i < totalLetters; i ++) {
-        let random = Math.round(Math.random() * 10); 
-        let randomWPM = this.difficulty + random; 
-        let newTime = (60/randomWPM * 1000)/lettersPerWord; 
-        totalTime += newTime; 
-        setTimeout(()=> {
-          if(!this.winner) this.p2Text += this.apiText[i];
-        },totalTime);
-      }
+      }, 5000);
     },
+    
     trackInput() {
       let key = event.key;
-      let currentTextLength = this.userIs === "player1" ? this.p1Text.length : this.p2Text.length;
+      let currentTextLength =  this.p1Text.length;
       let currentLetter = this.apiText[currentTextLength];
       if(key !== currentLetter && key !== "Shift") {this.mistake = true;}
       if(key === currentLetter) { 
-        this.userIs === "player1" ? this.p1Text += key : this.p2Text += key;
+        this.p1Text += key;
         this.mistake = false; 
         this.autoScroll(); 
       }      
@@ -202,9 +210,9 @@ export default {
     },
     setDifficulty(level) {
       this.difficulty = {
-        easy: 30,
-        medium: 40,
-        hard: 50
+        easy: 32,
+        medium: 42,
+        hard: 52
       }[level];
       this.startGame();
     },
@@ -212,12 +220,13 @@ export default {
       if(choice === "yes") {
         this.prompt = "Select AI Difficulty";
         this.difficulty = "";
-        this.tracking = false; 
         this.currentLetterID = "";
+        this.mistake = false; 
         this.p1Text = "";
         this.p2Text = "";
         this.p1Time = 0;
         this.p2Time = 0;
+        document.getElementById('text-body').scrollTop = 0;
         this.getIpsum(); 
       } else if (choice === "no") {
         this.$router.push("/");
@@ -227,7 +236,7 @@ export default {
       //default
       let state = "active"
       //get all words of client
-      const splitText = this.userIs === "player1" ? this.p1Text.split(" ") : this.p2Text.split(" ");
+      const splitText = this.p1Text.split(" ") 
       //add spaces to match api words
       const words = []; 
       for(let i = 0; i < splitText.length; i++) {
@@ -271,11 +280,9 @@ export default {
   },
   mounted() {
     this.getIpsum(); 
-    //AI Version
-    this.player1 = this.$store.state.id;  
   },
   updated() {
-    // console.log("updating")
+    console.log("updating")
   }
 };
 </script>
