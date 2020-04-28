@@ -88,9 +88,7 @@ export default {
       const request = {
         "api_text": this.apiText
       }
-      const response = await this.$axios.put(url,request);
-      const data = response.data; 
-      console.log("api text", data)
+      if(!this.apiText) await this.$axios.put(url,request);
     },
     player2 () {
       if(this.player2) this.startGame();
@@ -322,11 +320,14 @@ export default {
       if(scrollHeight > 100) textBody.scrollTop += 20;
     }
   },
-  mounted() {
+  async mounted() {
     let path = this.$route.path; 
     this.id = path.split("/")[2];
-    this.getGame();
+    await this.getGame();
     if(!this.apiText)this.getIpsum();  
+    if(this.player1 && !this.player2 && this.userIs !== "player1") {
+      this.prompt = "Click Ready To Start"
+    }
     // this.player1 = this.$store.state.id
   },
   updated() {
