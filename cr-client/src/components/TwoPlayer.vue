@@ -211,6 +211,13 @@ export default {
       this.link = `http://localhost:8080/2-player/${this.id}`; 
 
       if(!this.apiText)this.getIpsum();  
+      
+      if(!this.player2 && this.userIs === "player1"){
+        this.prompt = "Click Link To Copy"
+      }
+      if(this.player1 && !this.player2 && this.userIs !== "player1") {
+        this.prompt = "Click Ready To Start"
+      }
     },
     startGame() {
      for (let i = 5; i > 0; i--) {
@@ -232,12 +239,14 @@ export default {
       let key = event.key;
       let currentTextLength = this.userIs === "player1" ? this.p1Text.length : this.p2Text.length;
       let currentLetter = this.apiText[currentTextLength];
-      if(key !== currentLetter && key !== "Shift") {this.mistake = true;}
-      if(key === currentLetter) { 
-        this.userIs === "player1" ? this.p1Text += key : this.p2Text += key;
-        this.mistake = false; 
-        this.autoScroll(); 
-      }      
+      if(this.userIs === "player1" || this.userIs === "player2"){
+        if(key !== currentLetter && key !== "Shift") {this.mistake = true;}
+        if(key === currentLetter) { 
+          this.userIs === "player1" ? this.p1Text += key : this.p2Text += key;
+          this.mistake = false; 
+          this.autoScroll(); 
+        }      
+      }
     },
     processClick(event) {
 
@@ -347,16 +356,11 @@ export default {
       if(scrollHeight > 100) textBody.scrollTop += 20;
     }
   },
-  async mounted() {
+  mounted() {
     let path = this.$route.path; 
     this.id = path.split("/")[2];
-    await this.getGame();
-    if(!this.player2 && this.userIs === "player1"){
-      this.prompt = "Click Link To Copy"
-    }
-    if(this.player1 && !this.player2 && this.userIs !== "player1") {
-      this.prompt = "Click Ready To Start"
-    }
+    this.getGame();
+    
     // this.player1 = this.$store.state.id
   },
   updated() {
