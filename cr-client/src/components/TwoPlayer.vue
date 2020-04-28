@@ -60,6 +60,7 @@ export default {
   },
   data() {
     return {
+      id: "", 
       prompt: "Click Link To Copy",
       link: "",
       tracking: false, 
@@ -81,6 +82,15 @@ export default {
         this.tracking = false;
         this.prompt = "Play Again?"; 
       }
+    },
+    async apiText () {
+      const url = `http://localhost:8000/api/games/${this.id}`; 
+      const request = {
+        "api_text": this.apiText
+      }
+      const response = await this.$axios.put(url,request);
+      const data = response.data; 
+      console.log("api text", data)
     },
     player2 () {
       if(this.player2) this.startGame();
@@ -173,13 +183,12 @@ export default {
       const hipsterResponse = await this.$axios.get(hipsterQuery);
       const hipsterText = hipsterResponse.data[0];
       this.apiText = hipsterText;
-      this.apiText = "q w e r t y q w e r t y"
+      // this.apiText = "q w e r t y q w e r t y"
       // this.apiText= "aaaaaaaaaaaaaaaaaaaaa sssssssssssssssssss ddddddddddddddddddddd ffffffffffffffffff"
     },
     async getGame() {
-      let path = this.$route.path; 
-      let id = path.split("/")[2];
-      let url = `http://localhost:8000/api/games/${id}`; 
+     
+      let url = `http://localhost:8000/api/games/${this.id}`; 
 
       // const request = {
       //   "player1": this.id
@@ -194,7 +203,7 @@ export default {
       if(data.player2)this.player2 = data.player2;
       if(data.time)this.time = data.time;
       if(data.apiText)this.apiText = data.apiText;
-      this.link = `http://localhost:8080/2-player/${id}`; 
+      this.link = `http://localhost:8080/2-player/${this.id}`; 
 
     },
     startGame() {
@@ -314,6 +323,8 @@ export default {
     }
   },
   mounted() {
+    let path = this.$route.path; 
+    this.id = path.split("/")[2];
     this.getGame();
     if(!this.apiText)this.getIpsum();  
     // this.player1 = this.$store.state.id
