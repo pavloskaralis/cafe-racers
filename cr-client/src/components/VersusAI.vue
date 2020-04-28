@@ -71,6 +71,9 @@ export default {
     }
   },
   watch: {
+    difficulty() {
+      if(this.difficulty)this.startGame();
+    },
     winner () {
       if(this.winner) {
         this.tracking = false;
@@ -80,11 +83,11 @@ export default {
     //AI version
     tracking () {
       if(this.tracking) {
-        let totalWords = this.apiWords.length;
-        let totalLetters = this.apiText.length; 
-        let random = Math.round(Math.random() * 5);
-        let time = (60/(this.difficulty + random) * totalWords)/totalLetters * 1000
-        let i = 0; 
+      let totalWords = this.apiWords.length;
+      let totalLetters = this.apiText.length; 
+      let random = Math.round(Math.random() * 5);
+      let time = (60/(this.difficulty + random) * totalWords)/totalLetters * 1000
+       let i = 0; 
         this.ai = setInterval( ()=> {
           this.p2Text += this.apiText[i]
           i++
@@ -208,11 +211,10 @@ export default {
     },
     setDifficulty(level) {
       this.difficulty = {
-        easy: 32,
-        medium: 42,
-        hard: 52
+        easy: 34,
+        medium: 44,
+        hard: 54
       }[level];
-      this.startGame();
     },
      setNext(choice){
       if(choice === "yes") {
