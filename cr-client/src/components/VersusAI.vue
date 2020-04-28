@@ -109,10 +109,10 @@ export default {
       }
     },
     winner () {
-      if(this.p1Completion === 100 && this.p2Completion === 100) {
-        if(this.p1Time === this.p2Time) return "tie";
+      if(this.p1Completion === 100 || this.p2Completion === 100) {
+        if(this.p1Completion === 100 && this.p2Completion === 100 ) return "tie";
         //AI Version
-        return this.p1Time < this.p2Time ? "player1" : "AI";
+        return this.p1Completion === 100 ? "player1" : "AI";
       } else {
         return ""
       }
@@ -160,8 +160,8 @@ export default {
         this.tracking = true;
         this.startAI(); 
         let interval = setInterval( ()=> {
-          if(this.p1Completion < 100) this.p1Time += 1;
-          if(this.p2Completion < 100) this.p2Time += 1;
+          this.p1Time += 1;
+          this.p2Time += 1;
           if(this.winner) clearInterval(interval);
         }, 1000);
       }, 4000);
@@ -178,7 +178,7 @@ export default {
         let newTime = (60/randomWPM * 1000)/lettersPerWord; 
         totalTime += newTime; 
         setTimeout(()=> {
-          this.p2Text += this.apiText[i];
+          if(!this.winner) this.p2Text += this.apiText[i];
         },totalTime);
       }
     },
@@ -203,7 +203,7 @@ export default {
     setDifficulty(level) {
       this.difficulty = {
         easy: 30,
-        medium: 35,
+        medium: 40,
         hard: 50
       }[level];
       this.startGame();
@@ -212,6 +212,7 @@ export default {
       if(choice === "yes") {
         this.prompt = "Select AI Difficulty";
         this.difficulty = "";
+        this.tracking = false; 
         this.currentLetterID = "";
         this.p1Text = "";
         this.p2Text = "";
@@ -274,7 +275,7 @@ export default {
     this.player1 = this.$store.state.id;  
   },
   updated() {
-    console.log("updating")
+    // console.log("updating")
   }
 };
 </script>
