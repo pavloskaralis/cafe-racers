@@ -72,6 +72,11 @@ export default {
       p2Time: 0,
     }
   },
+  watch: {
+    winner () {
+      if(this.winner) this.prompt = "Play Again?"; 
+    }
+  },
   computed: {
     apiWords () {
       const apiWords = []; 
@@ -106,9 +111,10 @@ export default {
     winner () {
       if(this.p1Completion === 100 && this.p2Completion === 100) {
         if(this.p1Time === this.p2Time) return "tie";
-        return this.p1Time < this.p2Time ? "player1" : "player2";
+        //AI Version
+        return this.p1Time < this.p2Time ? "player1" : "AI";
       } else {
-        return "game in progress"
+        return ""
       }
     },
     p1Cup () {
@@ -124,7 +130,7 @@ export default {
       return {
         cup: "right",
         //AI Version
-        player: "player2",  
+        player: "AI",  
         speed: this.p2Speed,
         completion: this.p2Completion,
         winner: this.winner
@@ -133,7 +139,7 @@ export default {
     promptOptions () {
       return {
         "Select AI Difficulty": ["easy","medium","hard"],
-        "play again": ["yes","no"]
+        "Play Again?": ["yes","no"]
       }[this.prompt]
     }
   },
@@ -143,7 +149,7 @@ export default {
       const hipsterResponse = await this.$axios.get(hipsterQuery);
       const hipsterText = hipsterResponse.data[0];
       this.apiText = hipsterText;
-      this.apiText= "short easy sentence"
+      // this.apiText= "short easy sentence"
     },
     startGame() {
       for (let i = 4; i > 0; i--) {
@@ -153,9 +159,10 @@ export default {
         this.prompt = "";
         this.tracking = true;
         this.startAI(); 
-        setInterval( ()=> {
+        let interval = setInterval( ()=> {
           if(this.p1Completion < 100) this.p1Time += 1;
           if(this.p2Completion < 100) this.p2Time += 1;
+          if(this.winner) clearInterval(interval);
         }, 1000);
       }, 4000);
     },
@@ -190,7 +197,7 @@ export default {
       if(["easy","medium","hard"].indexOf(event)!== -1) {
         this.setDifficulty(event)
       } else if (["yes","no"].indexOf(event)!== -1) {
-        return null
+        this.setNext(event);
       }
     },
     setDifficulty(level) {
@@ -259,14 +266,15 @@ export default {
       let lHeight = letter.getBoundingClientRect().top;
       let scrollHeight = lHeight - tbHeight;
       if(scrollHeight > 100) textBody.scrollTop += 20;
-     
-     console.log(this.p1Completion);
     }
   },
   mounted() {
     this.getIpsum(); 
     //AI Version
     this.player1 = this.$store.state.id;  
+  },
+  updated() {
+    console.log("updating")
   }
 };
 </script>

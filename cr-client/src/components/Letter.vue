@@ -13,8 +13,8 @@ export default {
     style() {
         return {
             active: {},
-            inactive: {opacity: '.5'},
-            current: {backgroundColor: !this.isWrong ? 'rgb(0,165,255)' : 'rgb(200,0,60)'}
+            inactive: {color: "gray", textStroke: "gray 1px"},
+            current: {backgroundColor: !this.isWrong ? "rgb(0,165,255)" : "rgb(200,0,60)"}
         }[this.status]
     }
   }
@@ -26,10 +26,12 @@ export default {
         flex-direction: column;
         font-family: $fontB; 
         -webkit-text-stroke: $dark-blue 1px;
+
         font-size: 28px; 
         padding: 0 3px; 
         min-width: 11px;
         margin-bottom: 12px;
+        color: $dark-blue;
 
         @media(max-width: $breakpointB) {
               font-size: 26px; 
