@@ -111,7 +111,6 @@ export default {
       if (this.p1Text && this.time) { 
         let newTime = Date.now()/1000; 
         let difference = newTime - this.time;
-
         return  Math.round(this.p1Text.split(" ").length/difference * 60)
       }
       return 0;
@@ -184,8 +183,6 @@ export default {
         this.prompt = "";
         this.tracking = true;
         let date = Date.now()/1000;
-       
-        this.time = date;
         this.time = date; 
 
       }, 5000);
@@ -224,7 +221,6 @@ export default {
         this.mistake = false; 
         this.p1Text = "";
         this.p2Text = "";
-        this.time = 0;
         this.time = 0;
         document.getElementById('text-body').scrollTop = 0;
         this.getIpsum(); 

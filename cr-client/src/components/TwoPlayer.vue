@@ -99,6 +99,20 @@ export default {
         "tracking": this.tracking
       }
       await this.$axios.put(url,request);
+    },
+    async p1Text () {
+      const url = `http://localhost:8000/api/games/${this.id}`; 
+      const request = {
+        "p1_text": this.p1Text
+      }
+      await this.$axios.put(url,request);
+    },
+    async p2Text () {
+      const url = `http://localhost:8000/api/games/${this.id}`; 
+      const request = {
+        "p2_text": this.p2Text
+      }
+      await this.$axios.put(url,request);
     }
   },
   computed: {
@@ -220,19 +234,15 @@ export default {
       }
     },
     startGame() {
-     for (let i = 5; i > 0; i--) {
-        setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [4,3,2,1,0][i-1])
-      }
+    //  for (let i = 5; i > 0; i--) {
+    //     setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [4,3,2,1,0][i-1])
+    //   }
       setTimeout(()=> {
         this.prompt = "";
         this.tracking = true;
-        // this.startAI(); 
         let date = Date.now()/1000;
-       
-        this.time = date;
         this.time = date; 
-
-      }, 5000);
+      }, 0);
     },
     
     trackInput() {
@@ -251,12 +261,6 @@ export default {
     processClick(event) {
 
       switch(event) {
-        case "easy": this.setDifficulty(event);
-          break;
-        case "medium": this.setDifficulty(event);
-          break;
-        case "hard": this.setDifficulty(event);
-          break;
         case "yes":  this.setNext(event);
           break;
         case "no":  this.setNext(event);
@@ -266,17 +270,8 @@ export default {
         case "ready": this.addPlayer2();
           break;
       }
+    },
 
-     
-    },
-    setDifficulty(level) {
-      this.difficulty = {
-        easy: 32,
-        medium: 42,
-        hard: 52
-      }[level];
-      this.startGame();
-    },
      setNext(choice){
       if(choice === "yes") {
         // this.$router.go(0);
@@ -286,7 +281,6 @@ export default {
         this.currentLetterID = "";
         this.p1Text = "";
         this.p2Text = "";
-        this.time = 0;
         this.time = 0;
         this.getIpsum(); 
       } else if (choice === "no") {
