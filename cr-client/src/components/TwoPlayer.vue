@@ -52,7 +52,7 @@ import Letter from "./Letter"
 import Button from './Button'
 
 export default {
-  name: "versus-ai",
+  name: "two-player",
   components: {
     "cup": Cup,
     "letter": Letter,
@@ -62,7 +62,6 @@ export default {
     return {
       id: "", 
       prompt: "",
-      link: "",
       tracking: false, 
       currentLetterID: "",
       mistake: false,
@@ -80,18 +79,46 @@ export default {
     winner () {
       if(this.winner) {
         this.tracking = false;
-        this.prompt = "Play Again?"; 
+        if(this.userIs === "player1" && this.p1Again){
+          this.prompt = "Waiting For Other Player"
+        } else if(this.userIs === "player2" && this.p2Again){
+          this.prompt = "Waiting For Other Player"
+        }else {
+          this.prompt = "Play Again?"; 
+        }
       }
+    },
+    p1Again () {
+        if(this.p1Again && this.p2Again) {
+          // this.newGame(); 
+        } else if (this.p1Again === 0 || this.p2Again === 0) {
+          // this.endGame();
+        }
+    },
+    p2Again () {
+        if(this.p1Again && this.p2Again) {
+          // this.newGame();
+        } else if (this.p1Again === 0 || this.p2Again === 0) {
+          // this.endGame();
+        }
     },
     async apiText () {
       const url = `http://localhost:8000/api/games/${this.id}`; 
       const request = {
         "api_text": this.apiText
       }
-      if(this.apiText) await this.$axios.put(url,request);
+      await this.$axios.put(url,request);
     },
     player2 () {
-      if(this.player2 && !this.tracking) this.startGame();
+      //trouble maker
+      if(this.player2 && !this.tracking && !this.winner) this.startGame();
+    },
+    async time () {
+      const url = `http://localhost:8000/api/games/${this.id}`; 
+      const request = {
+        "time": this.time
+      }
+      await this.$axios.put(url,request);
     },
     async tracking () {
       const url = `http://localhost:8000/api/games/${this.id}`; 
@@ -140,7 +167,6 @@ export default {
       if (this.p2Text && this.time) { 
         let newTime = Date.now()/1000; 
         let difference = newTime - this.time;
-
         return  Math.round(this.p2Text.split(" ").length/difference * 60)
       }
       return 0;    
@@ -163,8 +189,7 @@ export default {
     winner () {
       if(this.p1Completion === 100 || this.p2Completion === 100) {
         if(this.p1Completion === 100 && this.p2Completion === 100 ) return "tie";
-        //AI Version
-        return this.p1Completion === 100 ? "player1" : "AI";
+        return this.p1Completion === 100 ? "player1" : "player2";
       } else {
         return ""
       }
@@ -192,9 +217,9 @@ export default {
       return {
         "Select AI Difficulty": ["easy","medium","hard"],
         "Play Again?": ["yes","no"],
-        "Click Link To Copy": [this.link],
+        "Click Link To Copy": [`http://localhost:8080/2-player/${this.id}`],
         "Click Ready To Start": ["ready"],
-        "Share Copied Link": [this.link]
+        "Share Copied Link": [`http://localhost:8080/2-player/${this.id}`]
       }[this.prompt]
     }
   },
@@ -204,7 +229,7 @@ export default {
       const hipsterResponse = await this.$axios.get(hipsterQuery);
       const hipsterText = hipsterResponse.data[0];
       this.apiText = hipsterText;
-      // this.apiText = "q w e r t y q w e r t y"
+      this.apiText = "abc"
       // this.apiText= "aaaaaaaaaaaaaaaaaaaaa sssssssssssssssssss ddddddddddddddddddddd ffffffffffffffffff"
     },
     async getGame() {
@@ -213,6 +238,7 @@ export default {
 
       const response = await this.$axios.get(url);
       const data = response.data[0]
+
       if(data.tracking)this.tracking = data.tracking;
       if(data.p1_again)this.p1Again = data.p1_again;
       if(data.p1_text)this.p1Text = data.p1_text;
@@ -222,21 +248,23 @@ export default {
       if(data.player2)this.player2 = data.player2;
       if(data.time)this.time = data.time;
       if(data.api_text) this.apiText = data.api_text;
-      this.link = `http://localhost:8080/2-player/${this.id}`; 
 
       if(!this.apiText)this.getIpsum();  
-      
+            // console.log(this.p1Again, this.p2Again)
+
       if(!this.player2 && this.userIs === "player1"){
         this.prompt = "Click Link To Copy"
       }
       if(this.player1 && !this.player2 && this.userIs !== "player1") {
         this.prompt = "Click Ready To Start"
       }
+
     },
     startGame() {
     //  for (let i = 5; i > 0; i--) {
     //     setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [4,3,2,1,0][i-1])
     //   }
+    console.log("starting....")
       setTimeout(()=> {
         this.prompt = "";
         this.tracking = true;
@@ -261,31 +289,24 @@ export default {
     processClick(event) {
 
       switch(event) {
-        case "yes":  this.setNext(event);
+        case "yes":  this.handleYes();
           break;
-        case "no":  this.setNext(event);
+        case "no":  this.handleNo();
           break;
-        case this.link: this.copyLink();
+        case `http://localhost:8080/2-player/${this.id}`: this.copyLink();
           break;
         case "ready": this.addPlayer2();
           break;
       }
     },
+    async handleYes () {
+      const url = `http://localhost:8000/api/games/${this.id}`; 
+      let request = this.userIs === "player1" ? {"p1_again": true} :{"p2_again": true}; 
+      await this.$axios.put(url,request);
+      this.prompt = "Waiting For Other Player"
+    },
+    async handleNo () {
 
-     setNext(choice){
-      if(choice === "yes") {
-        // this.$router.go(0);
-        this.prompt = "Select AI Difficulty";
-        this.difficulty = "";
-        this.tracking = false; 
-        this.currentLetterID = "";
-        this.p1Text = "";
-        this.p2Text = "";
-        this.time = 0;
-        this.getIpsum(); 
-      } else if (choice === "no") {
-        this.$router.push("/");
-      }
     },
     copyLink () {
       let text = document.getElementById("button0").children[0].textContent;
@@ -354,8 +375,6 @@ export default {
     let path = this.$route.path; 
     this.id = path.split("/")[2];
     this.getGame();
-    
-    // this.player1 = this.$store.state.id
   },
   updated() {
     // console.log("updating")

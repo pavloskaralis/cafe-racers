@@ -25,7 +25,13 @@ export default {
         return `polygon(100% ${(this.state.completion * .585) + 11.1}%, 100% 100%, 0 100%, 0 ${(this.state.completion * .585) + 11.1}%)`;
     },
     opacity () {
-      return this.state.winner !== this.state.player && this.state.winner !== "tie" ? 0 : 1; 
+      let opacity; 
+      if(this.state.cup === "left") {
+        opacity = (this.state.winner !== "player1" && this.state.winner !== "tie") ? 0 : 1; 
+      } else if (this.state.cup === "right") {
+        opacity = (this.state.winner !== "player2" && this.state.winner !== "tie") ? 0 : 1; 
+      }
+      return opacity
     }, 
     text () {
       if(this.state.cup === "left" && this.state.player === "player1") {
