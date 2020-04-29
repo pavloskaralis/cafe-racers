@@ -76,44 +76,20 @@ export default {
       apiText: "",
       p1Text: "",
       p2Text: "",
-      p1Again: "no answer",
-      p2Again: "no answer",
+      p1Again: false,
+      p2Again: false,
       time: 0,
     };
   },
+
+
+
+
   watch: {
     winner() {
       if (this.winner) {
         this.tracking = false;
         this.prompt = "Play Again?";     
-      }
-    },
-    async restart() {
-      if(this.restart){
-
-        this.p1Text = "";
-        this.p2Text = "";
-        this.p1Again = "no answer";
-        this.p2Again = "no answer";
-
-        const url = `http://localhost:8000/api/games/${this.id}`;
-        const request = {
-          p1_text: this.p1Text,
-          p2_text: this.p2Text,
-          p1_again: "no answer",
-          p2_again: "no answer"
-        };
-
-        await this.$axios.put(url, request);  
-
-        this.getIpsum();
-        this.mistake = false;
-        
-        setTimeout(() => {
-          this.startGame();
-          
-        }, 0)
-        // console.log(this.apiText)
       }
     },
     async p1Again() {
@@ -122,7 +98,7 @@ export default {
 
       await this.$axios.put(url, request);
       
-      if(this.userIs === "player1" && this.p1Again === "yes") {
+      if(this.userIs === "player1" && this.p1Again) {
         this.prompt = "Waiting For Other Player";
       }
 
@@ -130,9 +106,9 @@ export default {
     async p2Again() {
       const url = `http://localhost:8000/api/games/${this.id}`;
       let request = { p2_again: this.p2Again };
-      await this.$axios.put(url, request);
-      
-      if(this.userIs === "player2" && this.p2Again === "yes") {
+      let response = await this.$axios.put(url, request);
+      console.log("p2 again", response, request)
+      if(this.userIs === "player2" && this.p2Again) {
         this.prompt = "Waiting For Other Player";
       }
 
@@ -146,10 +122,6 @@ export default {
         api_text: this.apiText,
       };
       await this.$axios.put(url, request);
-    },
-    player2() {
-      //trouble maker
-      if (this.player1 && this.player2 && !this.tracking && !this.winner && !this.restart) this.startGame();
     },
     async time() {
       const url = `http://localhost:8000/api/games/${this.id}`;
@@ -171,7 +143,6 @@ export default {
         p1_text: this.p1Text,
       };
       await this.$axios.put(url, request);
-      console.log("p1 request", request)
 
     },
     async p2Text() {
@@ -179,12 +150,31 @@ export default {
       const request = {
         p2_text: this.p2Text,
       };
-      await this.$axios.put(url, request);
+      let response = await this.$axios.put(url, request);
+      console.log("p2 text sent", request, response)
+    },
+    async start () {
+      this.startGame();
+    },
+    async restart() {
+      if(this.restart) this.restartGame(); 
     },
   },
+
+
+
   computed: {
+    start () {
+      return (
+        this.player1 && this.player2 && 
+        !this.p1Text && !this.p2Text &&
+        !this.winner ?
+        true : false
+      )
+      
+    },
     restart () {
-      return this.p1Again === "yes" && this.p2Again === "yes" ? true : false; 
+      return this.p1Again && this.p2Again ? true : false; 
     },
     apiWords() {
       const apiWords = [];
@@ -231,8 +221,7 @@ export default {
     },
     winner() {
       if (this.p1Completion === 100 || this.p2Completion === 100) {
-        if (this.p1Completion === 100 && this.p2Completion === 100)
-          return "tie";
+        if (this.p1Completion === 100 && this.p2Completion === 100) return "tie";
         return this.p1Completion === 100 ? "player1" : "player2";
       } else {
         return "";
@@ -267,7 +256,38 @@ export default {
       }[this.prompt];
     },
   },
+
+
+
+
   methods: {
+     async restartGame () {
+        if(this.userIs === "player1") {
+          this.p1Text = "";
+          console.log("restart p1")
+        } else if (this.userIs === "player2") {
+          this.p2Text = ""; 
+          console.log("restart p2")
+        }
+
+    },
+    async startGame() {
+      if(this.userIs === "player1" && this.p1Again) {this.p1Again = false; console.log("update again 1")}
+      if(this.userIs === "player2" && this.p2Again) {this.p2Again = false; console.log("update again 2")}
+      
+      this.getIpsum();
+      //  for (let i = 5; i > 0; i--) {
+      //     setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [4,3,2,1,0][i-1])
+      //   }
+      setTimeout(() => {
+        console.log("starting")
+        this.mistake = false;
+        this.prompt = "";
+        this.tracking = true;
+        let date = Date.now() / 1000;
+        this.time = date;
+      }, 0);
+    },
     async getIpsum() {
       const hipsterQuery =
       "https://hipsum.co/api/?type=hipster-centric&sentences=2";
@@ -293,8 +313,6 @@ export default {
       if (data.time) this.time = data.time;
       if (data.api_text) this.apiText = data.api_text;
 
-      if (!this.apiText) this.getIpsum();
-
       if (!this.player2 && this.userIs === "player1") {
         this.prompt = "Click Link To Copy";
       }
@@ -302,19 +320,7 @@ export default {
         this.prompt = "Click Ready To Start";
       }
     },
-    startGame() {
-      //  for (let i = 5; i > 0; i--) {
-      //     setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [4,3,2,1,0][i-1])
-      //   }
-      setTimeout(() => {
-        console.log("starting")
-        
-        this.prompt = "";
-        this.tracking = true;
-        let date = Date.now() / 1000;
-        this.time = date;
-      }, 0);
-    },
+   
     endGame() {
 
     },
@@ -339,7 +345,7 @@ export default {
     processClick(event) {
       switch (event) {
         case "yes":
-          this.userIs === "player1" ? this.p1Again = event  : this.p2Again = event;
+          this.userIs === "player1" ? this.p1Again = true  : this.p2Again = true;
           break;
         case "no":
           null

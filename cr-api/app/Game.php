@@ -11,8 +11,6 @@ class Game extends Model
     protected $fillable = [
         'player1','player2',
         'api_text','p1_text','p2_text',
-        'p1_completion','p2_completion',
-        'p1_speed','p2_speed',
         'p1_again','p2_again',
         'time','tracking'
     ];
