@@ -245,7 +245,7 @@ export default {
         "Select AI Difficulty": ["easy", "medium", "hard"],
         "Play Again?": ["yes", "no"],
         "Click Link To Copy": [`http://localhost:8080/2-player/${this.id}`],
-        "Click Ready To Start": ["ready"],
+        "Click Ready To Join": ["ready"],
         "Share Copied Link": [`http://localhost:8080/2-player/${this.id}`],
         "Opponent Has Left": ["lobby"],
       }[this.prompt];
@@ -310,11 +310,11 @@ export default {
         if (data.end) this.end = data.end;
         if (data.api_text) this.apiText = data.api_text;
 
-        if (!this.player2 && this.userIs === "player1" && !this.winner) {
+        if (!this.player2 && this.userIs === "player1" && !this.end) {
           this.prompt = "Click Link To Copy";
         }
-        if (this.player1 && !this.player2 && this.userIs !== "player1") {
-          this.prompt = "Click Ready To Start";
+        if (this.player1 && !this.player2 && this.userIs !== "player1" && !this.end) {
+          this.prompt = "Click Ready To Join";
         }
       } catch {
         this.$router.push("/");
