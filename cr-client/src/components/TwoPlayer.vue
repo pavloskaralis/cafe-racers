@@ -56,6 +56,23 @@
 import Cup from "./Cup";
 import Letter from "./Letter";
 import Button from "./Button";
+import Echo from 'laravel-echo';
+ 
+window.Pusher = require('pusher-js');
+
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: 'cafe_racers',
+  cluster: 'mt1',
+  host: 'localhost:8000',
+  authEndpoint: 'localhost:8000/broadcasting/auth',
+  auth: {
+    headers: {
+      Accept: 'application/json',
+    },
+  }
+});
+
 
 export default {
   name: "two-player",
@@ -265,7 +282,6 @@ export default {
       //must be done here since restart is dependent on both p1Again and p2Again
       if (this.userIs === "player1" && this.p1Again) this.p1Again = false;
       if (this.userIs === "player2" && this.p2Again) this.p2Again = false;
-      console.log(this.p1Again, this.p2Again)
       //get api text; prevent 2 requests
       if(this.userIs === "player1") await this.getIpsum();
       //countdown
@@ -447,9 +463,14 @@ export default {
     },
   },
   mounted() {
+    console.log("mounting")
     let path = this.$route.path;
     this.id = path.split("/")[2];
     this.getGame();
+    window.Echo.channel('game')
+      .listen('GameProgress', (e) => {
+        console.log("websocket",e)
+      });
   },
   updated() {
     // console.log("updating")
