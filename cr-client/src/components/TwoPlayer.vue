@@ -316,14 +316,16 @@ export default {
         if (this.player1 && !this.player2 && this.userIs !== "player1" && !this.end) {
           this.prompt = "Click Ready To Join";
         }
+
+        if(this.end && this.userIs === "unknown")this.$router.push("/");
       } catch {
         this.$router.push("/");
       }
     },
     trackInput() {
       //fail safe to switch back again
-      if(this.userIs === "player1" && this.p1Again) this.p1Again = false;
-      if(this.userIs === "player2" && this.p2Again) this.p2Again = false;
+      // if(this.userIs === "player1" && this.p1Again) this.p1Again = false;
+      // if(this.userIs === "player2" && this.p2Again) this.p2Again = false;
 
       let key = event.key;
       let currentTextLength =
