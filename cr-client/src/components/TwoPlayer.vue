@@ -86,6 +86,8 @@ export default {
   watch: {
     winner() {
       if (this.winner) {
+        if(this.userIs === "player1" && !this.p1Text) this.endGame();
+        if(this.userIs === "player2" && !this.p2Text) this.endGame();
         this.tracking = false;
         this.prompt = "Play Again?";
       }
