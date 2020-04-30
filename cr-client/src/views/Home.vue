@@ -39,6 +39,11 @@ export default {
       const url = "http://localhost:8000/api/games";
       const request = {
         player1: this.id,
+        end: 0,
+        p1_again: 0,
+        p2_again: 0,
+        p1_text: "",
+        p2_text: ""
       };
 
       const response = await this.$axios.post(url, request);
