@@ -21,6 +21,7 @@ class ApiController extends Controller{
     $game->p1_text = $request->p1_text;
     $game->p2_text = $request->p2_text;
     $game->time = $request->time;
+    $game->end = $request->end;
     $game->tracking = $request->tracking;
     $game->p1_again = $request->p1_again;
     $game->p2_again = $request->p2_again;
@@ -56,6 +57,7 @@ class ApiController extends Controller{
             $game->p1_text = is_null($request->p1_text) ? $game->p1_text : $request->p1_text;
             $game->p2_text = is_null($request->p2_text) ? $game->p2_text : $request->p2_text;
             $game->time = is_null($request->time) ? $game->time : $request->time;
+            $game->end = is_null($request->end) ? $game->end : $request->end;
             $game->tracking = is_null($request->tracking) ? $game->tracking : $request->tracking;
             $game->p1_again = is_null($request->p1_again) ? $game->p1_again : $request->p1_again;
             $game->p2_again = is_null($request->p2_again) ? $game->p2_again : $request->p2_again;

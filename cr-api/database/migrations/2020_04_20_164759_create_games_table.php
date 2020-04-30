@@ -22,6 +22,7 @@ class CreateGamesTable extends Migration
             $table->string('p1_text')->nullable();
             $table->string('p2_text')->nullable();
             $table->integer('time')->nullable();
+            $table->boolean('end')->nullable();
             $table->boolean('tracking')->nullable();
             $table->boolean('p1_again')->nullable();
             $table->boolean('p2_again')->nullable();

@@ -12,6 +12,6 @@ class Game extends Model
         'player1','player2',
         'api_text','p1_text','p2_text',
         'p1_again','p2_again',
-        'time','tracking'
+        'time','tracking', 'end'
     ];
 }

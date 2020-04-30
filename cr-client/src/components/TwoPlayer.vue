@@ -78,6 +78,7 @@ export default {
       p2Text: "",
       p1Again: false,
       p2Again: false,
+      end: false,
       time: 0,
     };
   },
@@ -95,10 +96,9 @@ export default {
     async p1Again() {
       const url = `http://localhost:8000/api/games/${this.id}`;
       let request = { p1_again: this.p1Again };
-
       await this.$axios.put(url, request);
       
-      if(this.userIs === "player1" && this.p1Again) {
+      if(this.userIs === "player1" && this.p1Again && !this.end) {
         this.prompt = "Waiting For Other Player";
       }
 
@@ -106,15 +106,11 @@ export default {
     async p2Again() {
       const url = `http://localhost:8000/api/games/${this.id}`;
       let request = { p2_again: this.p2Again };
-      let response = await this.$axios.put(url, request);
-      console.log("p2 again", response, request)
-      if(this.userIs === "player2" && this.p2Again) {
+      await this.$axios.put(url, request);
+
+      if(this.userIs === "player2" && this.p2Again && !this.end) {
         this.prompt = "Waiting For Other Player";
       }
-
-      // } else if (this.p1Again === "no" || this.p2Again === "no") {
-      //   // this.endGame();
-      // }
     },
     async apiText() {
       const url = `http://localhost:8000/api/games/${this.id}`;
@@ -150,28 +146,27 @@ export default {
       const request = {
         p2_text: this.p2Text,
       };
-      let response = await this.$axios.put(url, request);
-      console.log("p2 text sent", request, response)
+      await this.$axios.put(url, request);
     },
-    async start () {
+    start () {
       this.startGame();
     },
-    async restart() {
+    restart() {
       if(this.restart) this.restartGame(); 
     },
+    end () {
+      this.prompt = "Opponent Has Left"
+    }
   },
-
 
 
   computed: {
     start () {
       return (
         this.player1 && this.player2 && 
-        !this.p1Text && !this.p2Text &&
-        !this.winner ?
+        !this.p1Text && !this.p2Text ?
         true : false
-      )
-      
+      )  
     },
     restart () {
       return this.p1Again && this.p2Again ? true : false; 
@@ -239,7 +234,6 @@ export default {
     p2Cup() {
       return {
         cup: "right",
-        //AI Version
         player: this.player2 ? this.userIs : "empty",
         speed: this.p2Speed,
         completion: this.p2Completion,
@@ -253,37 +247,40 @@ export default {
         "Click Link To Copy": [`http://localhost:8080/2-player/${this.id}`],
         "Click Ready To Start": ["ready"],
         "Share Copied Link": [`http://localhost:8080/2-player/${this.id}`],
+        "Opponent Has Left": ["lobby"]
       }[this.prompt];
     },
   },
-
-
 
 
   methods: {
      async restartGame () {
         if(this.userIs === "player1") {
           this.p1Text = "";
-          console.log("restart p1")
         } else if (this.userIs === "player2") {
           this.p2Text = ""; 
-          console.log("restart p2")
         }
 
     },
     async startGame() {
-      if(this.userIs === "player1" && this.p1Again) {this.p1Again = false; console.log("update again 1")}
-      if(this.userIs === "player2" && this.p2Again) {this.p2Again = false; console.log("update again 2")}
-      
-      this.getIpsum();
+      //must be done here since restart is dependent on both p1Again and p2Again
+      if(this.userIs === "player1" && this.p1Again) this.p1Again = false;
+      if(this.userIs === "player2" && this.p2Again) this.p2Again = false;
+      //get api text
+      await this.getIpsum();
+      //countdown
       //  for (let i = 5; i > 0; i--) {
       //     setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [4,3,2,1,0][i-1])
       //   }
       setTimeout(() => {
         console.log("starting")
+        //resets mistake if player ended on a mistake
         this.mistake = false;
+        //reveals api text
         this.prompt = "";
+        //enables keydown listener
         this.tracking = true;
+        //starting time 
         let date = Date.now() / 1000;
         this.time = date;
       }, 0);
@@ -298,31 +295,32 @@ export default {
       // this.apiText= "aaaaaaaaaaaaaaaaaaaaa sssssssssssssssssss ddddddddddddddddddddd ffffffffffffffffff"
     },
     async getGame() {
-      let url = `http://localhost:8000/api/games/${this.id}`;
+      try {
+        const url = `http://localhost:8000/api/games/${this.id}`;
+        const response = await this.$axios.get(url);
+        const data = response.data[0];
+  
+        if (data.tracking) this.tracking = data.tracking;
+        if (data.p1_again) this.p1Again = data.p1_again;
+        if (data.p1_text) this.p1Text = data.p1_text;
+        if (data.player1) this.player1 = data.player1;
+        if (data.p2_again) this.p2Again = data.p2_again;
+        if (data.p2_text) this.p2Text = data.p2_text;
+        if (data.player2) this.player2 = data.player2;
+        if (data.time) this.time = data.time;
+        if (data.end) this.end = data.end;
+        if (data.api_text) this.apiText = data.api_text;
 
-      const response = await this.$axios.get(url);
-      const data = response.data[0];
+        if (!this.player2 && this.userIs === "player1") {
+          this.prompt = "Click Link To Copy";
+        }
+        if (this.player1 && !this.player2 && this.userIs !== "player1") {
+          this.prompt = "Click Ready To Start";
+        }
 
-      if (data.tracking) this.tracking = data.tracking;
-      if (data.p1_again) this.p1Again = data.p1_again;
-      if (data.p1_text) this.p1Text = data.p1_text;
-      if (data.player1) this.player1 = data.player1;
-      if (data.p2_again) this.p2Again = data.p2_again;
-      if (data.p2_text) this.p2Text = data.p2_text;
-      if (data.player2) this.player2 = data.player2;
-      if (data.time) this.time = data.time;
-      if (data.api_text) this.apiText = data.api_text;
-
-      if (!this.player2 && this.userIs === "player1") {
-        this.prompt = "Click Link To Copy";
+      } catch {
+        this.$router.push("/");
       }
-      if (this.player1 && !this.player2 && this.userIs !== "player1") {
-        this.prompt = "Click Ready To Start";
-      }
-    },
-   
-    endGame() {
-
     },
     trackInput() {
       let key = event.key;
@@ -347,8 +345,8 @@ export default {
         case "yes":
           this.userIs === "player1" ? this.p1Again = true  : this.p2Again = true;
           break;
-        case "no":
-          null
+        case "no": 
+          this.endGame();
           break;
         case `http://localhost:8080/2-player/${this.id}`:
           this.copyLink();
@@ -356,7 +354,18 @@ export default {
         case "ready":
           this.addPlayer2();
           break;
+        case "lobby":
+          this.$router.push("/");
+          break
       }
+    },
+    async endGame() { 
+      const url = `http://localhost:8000/api/games/${this.id}`;
+      const request = {
+        end: true,
+      }
+      await this.$axios.put(url, request);
+      this.$router.push("/");
     },
     copyLink() {
       let text = document.getElementById("button0").children[0].textContent;
@@ -436,6 +445,12 @@ export default {
   updated() {
     // console.log("updating")
   },
+  beforeDestroy() {
+    if(this.end) {
+      const url = `http://localhost:8000/api/games/${this.id}`;
+      this.$axios.delete(url)
+    }
+  }
 };
 </script>
 <style src="../styles/Pieces.scss" scoped lang="scss"></style>
