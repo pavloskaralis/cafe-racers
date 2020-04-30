@@ -310,7 +310,7 @@ export default {
         if (data.end) this.end = data.end;
         if (data.api_text) this.apiText = data.api_text;
 
-        if (!this.player2 && this.userIs === "player1") {
+        if (!this.player2 && this.userIs === "player1" && !this.winner) {
           this.prompt = "Click Link To Copy";
         }
         if (this.player1 && !this.player2 && this.userIs !== "player1") {
@@ -367,9 +367,10 @@ export default {
     },
     async endGame() {
       const url = `http://localhost:8000/api/games/${this.id}`;
-      const request = {
+      let request = {
         end: true,
       };
+      this.userIs === "player1" ? request["player1"] = "" : request["player2"] = ""
       await this.$axios.put(url, request);
       this.$router.push("/");
     },

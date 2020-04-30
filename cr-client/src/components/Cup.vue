@@ -1,5 +1,5 @@
 <template>
-  <div class="cup-container">
+  <div class="cup-container" :style="this.state.player === 'empty' ? {opacity: '0'} : {}">
     <div class="winner-wrap">
       <div class="winner-text" :style="{ opacity: opacity }">
         {{ this.state.winner !== "tie" ? "Winner!" : "Tie!" }}
