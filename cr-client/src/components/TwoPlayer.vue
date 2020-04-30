@@ -95,7 +95,7 @@ export default {
       let request = { p1_again: this.p1Again };
       await this.$axios.put(url, request);
 
-      if (this.userIs === "player1" && this.p1Again && !this.end) {
+      if (this.userIs === "player1" && this.p1Again && !this.end && !this.tracking) {
         this.prompt = "Waiting For Other Player";
       }
     },
@@ -104,7 +104,7 @@ export default {
       let request = { p2_again: this.p2Again };
       await this.$axios.put(url, request);
 
-      if (this.userIs === "player2" && this.p2Again && !this.end) {
+      if (this.userIs === "player2" && this.p2Again && !this.end && !this.tracking) {
         this.prompt = "Waiting For Other Player";
       }
     },
@@ -113,38 +113,43 @@ export default {
       const request = {
         api_text: this.apiText,
       };
-      await this.$axios.put(url, request);
+      //prevent 2 requests
+      if(this.userIs === "player1") await this.$axios.put(url, request);
     },
     async time() {
       const url = `http://localhost:8000/api/games/${this.id}`;
       const request = {
         time: this.time,
       };
-      await this.$axios.put(url, request);
+      //prevent 2 requests
+      if(this.userIs === "player1") await this.$axios.put(url, request);
     },
     async tracking() {
       const url = `http://localhost:8000/api/games/${this.id}`;
       const request = {
         tracking: this.tracking,
       };
-      await this.$axios.put(url, request);
+      //prevent 2 requests
+      if(this.userIs === "player1") await this.$axios.put(url, request);
     },
     async p1Text() {
       const url = `http://localhost:8000/api/games/${this.id}`;
       const request = {
         p1_text: this.p1Text,
       };
-      await this.$axios.put(url, request);
+      //prevent two requests
+      if(this.userIs === "player1") await this.$axios.put(url, request);
     },
     async p2Text() {
       const url = `http://localhost:8000/api/games/${this.id}`;
       const request = {
         p2_text: this.p2Text,
       };
-      await this.$axios.put(url, request);
+      //prevent two requests
+      if(this.userIs === "player2") await this.$axios.put(url, request);
     },
     start() {
-      this.startGame();
+      if(this.start) this.startGame();
     },
     restart() {
       if (this.restart) this.restartGame();
@@ -156,7 +161,7 @@ export default {
 
   computed: {
     start() {
-      return this.player1 && this.player2 && !this.p1Text && !this.p2Text
+      return this.player1 && this.player2 && !this.p1Text && !this.p2Text && !this.tracking
         ? true
         : false;
     },
@@ -254,27 +259,29 @@ export default {
       }
     },
     async startGame() {
+      console.log("starting")
       //must be done here since restart is dependent on both p1Again and p2Again
       if (this.userIs === "player1" && this.p1Again) this.p1Again = false;
       if (this.userIs === "player2" && this.p2Again) this.p2Again = false;
-      //get api text
-      await this.getIpsum();
+      console.log(this.p1Again, this.p2Again)
+      //get api text; prevent 2 requests
+      if(this.userIs === "player1") await this.getIpsum();
       //countdown
-      //  for (let i = 5; i > 0; i--) {
-      //     setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [4,3,2,1,0][i-1])
-      //   }
+      for (let i = 5; i > 0; i--) {
+        setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [4,3,2,1,0][i-1])
+      }
       setTimeout(() => {
-        console.log("starting");
         //resets mistake if player ended on a mistake
         this.mistake = false;
         //reveals api text
         this.prompt = "";
-        //enables keydown listener
+        //enables keydown listener; 2 requests 
         this.tracking = true;
         //starting time
         let date = Date.now() / 1000;
-        this.time = date;
-      }, 0);
+        //prevent dates getting set twice 
+        if(this.userIs === "player1") this.time = date;
+      }, 5000);
     },
     async getIpsum() {
       const hipsterQuery =
@@ -282,8 +289,7 @@ export default {
       const hipsterResponse = await this.$axios.get(hipsterQuery);
       const hipsterText = hipsterResponse.data[0];
       this.apiText = hipsterText;
-      this.apiText = "abc";
-      // this.apiText= "aaaaaaaaaaaaaaaaaaaaa sssssssssssssssssss ddddddddddddddddddddd ffffffffffffffffff"
+      // this.apiText = "abc";
     },
     async getGame() {
       try {
@@ -313,11 +319,17 @@ export default {
       }
     },
     trackInput() {
+      //fail safe to switch back again
+      if(this.userIs === "player1" && this.p1Again) this.p1Again = false;
+      if(this.userIs === "player2" && this.p2Again) this.p2Again = false;
+
       let key = event.key;
       let currentTextLength =
         this.userIs === "player1" ? this.p1Text.length : this.p2Text.length;
       let currentLetter = this.apiText[currentTextLength];
+      //prevent spectator input
       if (this.userIs === "player1" || this.userIs === "player2") {
+        //ignore shift key since needed for capital letters
         if (key !== currentLetter && key !== "Shift") {
           this.mistake = true;
         }
