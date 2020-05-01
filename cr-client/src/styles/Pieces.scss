@@ -43,7 +43,7 @@
         cursor: default; 
         border: solid 6px lighten($brown,10%);    
         -ms-overflow-style: none;
-
+        scrollbar-width: none;
 
         @media(max-width: $breakpointB) {
           padding: 15px 22px;
