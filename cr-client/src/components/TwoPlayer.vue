@@ -290,6 +290,7 @@ export default {
         this.p2Text = "";
       }
       document.getElementById("text-body").scrollTop = 0;
+
     },
     async startGame() {
       // console.log("starting")
