@@ -28,7 +28,7 @@ class CreateGamesTable extends Migration
             $table->boolean('p2_again')->nullable();
         });
 
-        DB::statement("ALTER TABLE games AUTO_INCREMENT = 10000;");
+        // DB::statement("ALTER TABLE games AUTO_INCREMENT = 10000;");
     }
 
     /**
