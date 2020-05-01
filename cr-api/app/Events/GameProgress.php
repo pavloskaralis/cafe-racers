@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 
 use App\Game; 
 
-class GameProgress implements ShouldBroacast
+class GameProgress implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -21,8 +21,14 @@ class GameProgress implements ShouldBroacast
     public function __construct($id)
     {
         $this->game = Game::find($id);
+   
     }
 
+    /**
+    * Get the channels the event should broadcast on.
+    *
+    * @return Channel|array
+    */
     public function broadcastOn()
     {
         return new Channel('game');

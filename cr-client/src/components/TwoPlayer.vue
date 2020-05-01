@@ -265,7 +265,7 @@ export default {
         "Click Link To Copy": [`http://localhost:8080/2-player/${this.id}`],
         "Click Ready To Join": ["ready"],
         "Share Copied Link": [`http://localhost:8080/2-player/${this.id}`],
-        "Opponent Has Left": ["lobby"],
+        "Opponent Has Left": ["exit"],
       }[this.prompt];
     },
   },
@@ -291,7 +291,7 @@ export default {
       }
     },
     async startGame() {
-      console.log("starting")
+      // console.log("starting")
       //must be done here since restart is dependent on both p1Again and p2Again
       if (this.userIs === "player1" && this.p1Again) this.p1Again = 0;
       if (this.userIs === "player2" && this.p2Again) this.p2Again = 0;
@@ -320,7 +320,7 @@ export default {
       const hipsterResponse = await this.$axios.get(hipsterQuery);
       const hipsterText = hipsterResponse.data[0];
       this.apiText = hipsterText;
-      this.apiText = "abc";
+      // this.apiText = "abc";
     },
     async getGame() {
       try {
@@ -346,7 +346,10 @@ export default {
           this.prompt = "Click Ready To Join";
         }
 
+        if(this.end && this.player1) this.player1 = "";
+        if(this.end && this.player2) this.player2 = "";
         if(this.end && this.userIs === "unknown")this.$router.push("/");
+       
       } catch {
         this.$router.push("/");
       }
@@ -416,7 +419,7 @@ export default {
         case "ready":
           this.addPlayer2();
           break;
-        case "lobby":
+        case "exit":
           this.$router.push("/");
           break;
       }
@@ -491,19 +494,19 @@ export default {
       }
       return state;
     },
-    autoScroll() {
+    autoScroll(remount) {
       let letter = document.getElementById(this.currentLetterID);
       let textBody = document.getElementById("text-body");
       let tbHeight = textBody.getBoundingClientRect().top;
       let lHeight = letter.getBoundingClientRect().top;
       let scrollHeight = lHeight - tbHeight;
-      if (scrollHeight > 100) textBody.scrollTop += 20;
+      if (scrollHeight > 80) textBody.scrollTop += remount ? scrollHeight - 20 : 25;
     },
     async updateGame() {
       const url = `http://localhost:8000/api/games/${this.id}`;
       const response = await this.$axios.get(url);
       const data = response.data[0];
-      
+      // console.log("checking")
       if (this.player1 !== data.player1) this.player1 = data.player1;
       if (this.player2 !== data.player2) this.player2 = data.player2;
       if (!this.end !== data.end) this.end = data.end;
@@ -518,11 +521,13 @@ export default {
       if (this.userIs === "player2" && this.apiText !== data.api_text) this.apiText = data.api_text;
     }
   },
-  mounted() {
-    console.log("mounting")
+  async mounted() {
+    // console.log("mounting")
     let path = this.$route.path;
     this.id = path.split("/")[2];
-    this.getGame();
+    await this.getGame();
+    if(this.tracking)this.autoScroll(true); 
+
     this.updater = setInterval(()=> {
       this.updateGame();
     },250)
@@ -532,10 +537,11 @@ export default {
     //   });
   },
   updated() {
-    console.log("updating")
+    console.log("updating") 
   },
   beforeDestroy() {
     clearInterval(this.updater);
+    console.log("destroying")
     if (this.end) {
       const url = `http://localhost:8000/api/games/${this.id}`;
       this.$axios.delete(url);

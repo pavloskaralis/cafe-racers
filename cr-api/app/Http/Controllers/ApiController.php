@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Events\GameProgress;
 use App\Game;
 
 class ApiController extends Controller{
@@ -63,7 +63,9 @@ class ApiController extends Controller{
             $game->p2_again = is_null($request->p2_again) ? $game->p2_again : $request->p2_again;
 
             $game->save();
-    
+            
+            // event(new GameProgress($id));
+
             return response()->json([
                 "message" => "records updated successfully"
             ], 200);

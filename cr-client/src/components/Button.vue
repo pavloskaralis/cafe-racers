@@ -87,6 +87,19 @@ export default {
   -webkit-text-stroke: $dark-blue 1px;
   // background: red;
 
+  .button-pointer {
+    @extend .vertical-align;
+    height: 100%;
+    // background: blue;
+    @media (max-width: $breakpointF) {
+      font-size: 13px;
+    }
+    @media (max-width: $breakpointG) {
+      font-size: 11px;
+    }
+
+  }
+
   @media (max-width: $breakpointB) {
     font-size: 26px;
   }
@@ -115,36 +128,33 @@ export default {
   .button-text {
     @extend .vertical-align;
     width: 100%;
-    text-align: right;
-    // margin-right: 32px;
+    word-break: break-all;
+
+
     @media (max-width: $breakpointA) {
-      // margin-right: 28px;
       letter-spacing: 7px;
     }
     @media (max-width: $breakpointB) {
-      // margin-right: 24px;
       letter-spacing: 6.5px;
     }
     @media (max-width: $breakpointC) {
-      // margin-right: 20px;
       letter-spacing: 6px;
     }
     @media (max-width: $breakpointD) {
-      // margin-right: 16px;
       letter-spacing: 5.5px;
     }
     @media (max-width: $breakpointE) {
-      // margin-right: 12px;
       letter-spacing: 5px;
     }
     @media (max-width: $breakpointF) {
       letter-spacing: 4.5px;
+      font-size: 13px;
     }
     @media (max-width: $breakpointG) {
       letter-spacing: 4px;
+      font-size: 11px;
     }
     @media (max-height: $breakpointC) and (min-width: $breakpointC) {
-      // margin-right: 20px;
       letter-spacing: 6px;
     }
   }

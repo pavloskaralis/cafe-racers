@@ -186,6 +186,30 @@
           .prompt-options {
             display: flex;
             justify-content: space-evenly;
+            width: calc(100% - 20px);
+
+            @media(max-width: $breakpointB) {
+              width: calc(100% - 18px);
+
+            }
+            @media(max-width: $breakpointC) {
+              width: calc(100% - 16px);
+            }
+            @media(max-width: $breakpointD) {
+              width: calc(100% - 14px);
+            }
+            @media(max-width: $breakpointE) {
+              width: calc(100% - 12px);
+            }
+            @media(max-width: $breakpointF) {
+              width: calc(100% - 10px);
+            }
+            @media(max-width: $breakpointG) {
+              width: calc(100% - 8px);
+            }
+            @media(max-height: $breakpointC) and (min-width: $breakpointC) {
+              width: calc(100% - 16px);
+            }  
           }
         }
       }       
