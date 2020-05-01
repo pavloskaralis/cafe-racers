@@ -64,8 +64,8 @@ import Button from "./Button";
 //   broadcaster: 'pusher',
 //   key: 'cafe_racers',
 //   cluster: 'mt1',
-//   host: 'localhost:8000',
-//   authEndpoint: 'localhost:8000/broadcasting/auth',
+//   host: 'cafe-racers-backend.herokuapp.com',
+//   authEndpoint: 'cafe-racers-backend.herokuapp.com/broadcasting/auth',
 //   auth: {
 //     headers: {
 //       Accept: 'application/json',
@@ -105,7 +105,7 @@ export default {
     winner() {
       if (this.winner) {
         if(this.userIs === "player1" && !this.p1Text) this.endGame();
-        if(this.userIs === "player2" && !this.p2Text) this.endGame();
+        if(this.userIs === "player2" && !this.p2Text) this.endGame();  
         this.tracking = 0;
         this.prompt = "Play Again?";
       }
@@ -290,15 +290,13 @@ export default {
         this.p2Text = "";
       }
       document.getElementById("text-body").scrollTop = 0;
-
     },
     async startGame() {
       // console.log("starting")
       //must be done here since restart is dependent on both p1Again and p2Again
       if (this.userIs === "player1" && this.p1Again) this.p1Again = 0;
       if (this.userIs === "player2" && this.p2Again) this.p2Again = 0;
-      //get api text; prevent 2 requests
-      if(this.userIs === "player1") await this.getIpsum();
+      await this.getIpsum();
       //countdown
       for (let i = 5; i > 0; i--) {
         setTimeout(()=> this.prompt = `Start Typing In ${i}`, 1000 * [4,3,2,1,0][i-1])
@@ -321,7 +319,8 @@ export default {
         "https://hipsum.co/api/?type=hipster-centric&sentences=2";
       const hipsterResponse = await this.$axios.get(hipsterQuery);
       const hipsterText = hipsterResponse.data[0];
-      this.apiText = hipsterText;
+      //prevent 2 requests
+      if(this.userIs === "player1")this.apiText = hipsterText;
       // this.apiText = "abc";
     },
     async getGame() {
@@ -347,9 +346,9 @@ export default {
           this.prompt = "Click Ready To Join";
         }
 
-        if(this.end && this.player1) this.player1 = "";
-        if(this.end && this.player2) this.player2 = "";
-        if(this.end && this.userIs === "unknown")this.$router.push("/");
+        // if(this.end && this.player1) this.player1 = "";
+        // if(this.end && this.player2) this.player2 = "";
+        // if(this.end && this.userIs === "unknown")this.$router.push("/");
        
       } catch {
         this.$router.push("/");
@@ -426,6 +425,7 @@ export default {
       }
     },
     async endGame() {
+      // console.log("ending")
       const url = `http://localhost:8000/api/games/${this.id}`;
       let request = {
         end: 1,
@@ -520,7 +520,7 @@ export default {
 
       if (this.userIs === "player2" && this.time !== data.time) this.time = data.time;
       if (this.userIs === "player2" && this.apiText !== data.api_text) this.apiText = data.api_text;
-   }
+    }
   },
   async mounted() {
     // console.log("mounting")
@@ -546,6 +546,7 @@ export default {
     if (this.end) {
       const url = `http://localhost:8000/api/games/${this.id}`;
       this.$axios.delete(url);
+      this.$router.push("/");
     }
   },
 };
