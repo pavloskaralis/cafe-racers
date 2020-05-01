@@ -520,7 +520,7 @@ export default {
 
       if (this.userIs === "player2" && this.time !== data.time) this.time = data.time;
       if (this.userIs === "player2" && this.apiText !== data.api_text) this.apiText = data.api_text;
-    }
+   }
   },
   async mounted() {
     // console.log("mounting")
