@@ -118,7 +118,7 @@ export default {
       }
     },
     async p1Again() {
-      const url = `http://localhost:800/api/games/${this.id}`;
+      const url = `http://localhost:8000/api/games/${this.id}`;
       let request = { p1_again: this.p1Again };
       await this.$axios.put(url, request);
 
@@ -127,7 +127,7 @@ export default {
       }
     },
     async p2Again() {
-      const url = `http://localhost:800/api/games/${this.id}`;
+      const url = `http://localhost:8000/api/games/${this.id}`;
       let request = { p2_again: this.p2Again };
       await this.$axios.put(url, request);
 
@@ -135,16 +135,16 @@ export default {
         this.prompt = "Waiting For Other Player";
       }
     },
-    async apiText() {
-      const url = `http://localhost:800/api/games/${this.id}`;
-      const request = {
-        api_text: this.apiText,
-      };
-      //prevent 2 requests
-      if(this.userIs === "player1") await this.$axios.put(url, request);
-    },
+    // async apiText() {
+    //   const url = `http://localhost:8000/api/games/${this.id}`;
+    //   const request = {
+    //     api_text: this.apiText,
+    //   };
+    //   //prevent 2 requests
+    //   if(this.userIs === "player1") await this.$axios.put(url, request);
+    // },
     async time() {
-      const url = `http://localhost:800/api/games/${this.id}`;
+      const url = `http://localhost:8000/api/games/${this.id}`;
       const request = {
         time: this.time,
       };
@@ -152,7 +152,7 @@ export default {
       if(this.userIs === "player1") await this.$axios.put(url, request);
     },
     async tracking() {
-      const url = `http://localhost:800/api/games/${this.id}`;
+      const url = `http://localhost:8000/api/games/${this.id}`;
       const request = {
         tracking: this.tracking,
       };
@@ -160,7 +160,7 @@ export default {
       if(this.userIs === "player1") await this.$axios.put(url, request);
     },
     async p1Text() {
-      const url = `http://localhost:800/api/games/${this.id}`;
+      const url = `http://localhost:8000/api/games/${this.id}`;
       const request = {
         p1_text: this.p1Text,
       };
@@ -168,7 +168,7 @@ export default {
       if(this.userIs === "player1" && this.p1Text.length < this.apiText.length && !this.restart) await this.$axios.put(url, request);
     },
     async p2Text() {
-      const url = `http://localhost:800/api/games/${this.id}`;
+      const url = `http://localhost:8000/api/games/${this.id}`;
       const request = {
         p2_text: this.p2Text,
       };
@@ -290,7 +290,7 @@ export default {
     },
     async restartGame() {
       if (this.userIs === "player1") {
-        const url = `http://localhost:800/api/games/${this.id}`;
+        const url = `http://localhost:8000/api/games/${this.id}`;
         const request = {
           p1_text: "",
         };
@@ -298,7 +298,7 @@ export default {
         await this.$axios.put(url, request);
         this.p1Text = "";
       } else if (this.userIs === "player2") {
-        const url = `http://localhost:800/api/games/${this.id}`;
+        const url = `http://localhost:8000/api/games/${this.id}`;
         const request = {
           p2_text: "",
         };
@@ -339,12 +339,18 @@ export default {
       const hipsterResponse = await this.$axios.get(hipsterQuery);
       const hipsterText = hipsterResponse.data[0];
       //prevent 2 requests
-      if(this.userIs === "player1")this.apiText = hipsterText;
+      if(this.userIs === "player1"){
+        const url = `http://localhost:8000/api/games/${this.id}`;
+        const request = {
+          api_text: hipsterText,
+        };
+        this.$axios.put(url, request);
+      }
       // this.apiText = "abc";
     },
     async getGame() {
       try {
-        const url = `http://localhost:800/api/games/${this.id}`;
+        const url = `http://localhost:8000/api/games/${this.id}`;
         const response = await this.$axios.get(url);
         const data = response.data[0];
 
@@ -379,8 +385,10 @@ export default {
       // if(this.userIs === "player2" && this.p2Again) this.p2Again = 0;
 
       let key = event.key || mobile;
-      let currentTextLength =
-        this.userIs === "player1" ? this.p1Text.length : this.p2Text.length;
+      let currentTextLength = 0;
+      if(this.userIs === "player1") currentTextLength = this.p1Text.length;
+      if(this.userIs === "player2") currentTextLength = this.p2Text.length;
+
       let currentLetter = this.apiText[currentTextLength];
       //prevent spectator input
       if (this.userIs === "player1" || this.userIs === "player2") {
@@ -393,24 +401,24 @@ export default {
           if(this.userIs === "player1" && this.p1Text.length === this.apiText.length - 1){
             this.tracking = false; 
 
-            const url = `http://localhost:800/api/games/${this.id}`;
+            const url = `http://localhost:8000/api/games/${this.id}`;
             const request = {
-              p1_text: this.p1Text + key,
+              p1_text: this.apiText
             };
 
-            await this.$axios.put(url, request);
-            this.p1Text += key
+            let response = await this.$axios.put(url, request);
+            if(response)setTimeout(()=>this.p1Text = this.apiText, 0);
 
           } else if (this.userIs === "player2" && this.p2Text.length === this.apiText.length - 1){
             this.tracking = false; 
 
-            const url = `http://localhost:800/api/games/${this.id}`;
+            const url = `http://localhost:8000/api/games/${this.id}`;
             const request = {
-              p2_text: this.p2Text + key,
+              p2_text: this.apiText,
             };
 
-            await this.$axios.put(url, request);
-            this.p2Text += key
+            let response = await this.$axios.put(url, request);
+            if(response)setTimeout(()=>this.p2Text = this.apiText, 0);
 
           } else {            
             this.userIs === "player1"
@@ -448,7 +456,7 @@ export default {
     },
     async endGame() {
       // console.log("ending")
-      const url = `http://localhost:800/api/games/${this.id}`;
+      const url = `http://localhost:8000/api/games/${this.id}`;
       let request = {
         end: 1,
       };
@@ -467,7 +475,7 @@ export default {
       this.prompt = "Share Copied Link";
     },
     async addPlayer2() {
-      const url = `http://localhost:800/api/games/${this.id}`;
+      const url = `http://localhost:8000/api/games/${this.id}`;
       const request = {
         player2: this.$store.state.id,
       };
@@ -526,7 +534,7 @@ export default {
       if (scrollHeight > 80) textBody.scrollTop += remount ? scrollHeight - 20 : 25;
     },
     async updateGame() {
-      const url = `http://localhost:800/api/games/${this.id}`;
+      const url = `http://localhost:8000/api/games/${this.id}`;
       const response = await this.$axios.get(url);
       const data = response.data[0];
       // console.log("checking")
@@ -541,7 +549,7 @@ export default {
       if ((this.userIs === "player2" || this.userIs === "unknown") && this.p1Text !== data.p1_text) this.p1Text = data.p1_text;
 
       if ((this.userIs === "player2" || this.userIs === "unknown") && this.time !== data.time) this.time = data.time;
-      if ((this.userIs === "player2" || this.userIs === "unknown") && this.apiText !== data.api_text) this.apiText = data.api_text;
+      if (this.apiText !== data.api_text) this.apiText = data.api_text;
     }
   },
   async mounted() {
@@ -565,10 +573,9 @@ export default {
   beforeDestroy() {
     clearInterval(this.updater);
     // console.log("destroying")
-    if (this.end) {
-      const url = `http://localhost:800/api/games/${this.id}`;
+    if (this.end && this.userIs !== "unknown") {
+      const url = `http://localhost:8000/api/games/${this.id}`;
       this.$axios.delete(url);
-      this.$router.push("/");
     }
   },
 };
