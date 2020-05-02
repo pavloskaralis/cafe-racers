@@ -191,7 +191,6 @@ export default {
       if(mobile === "{shift}") mobile = "Shift";
       if(mobile === "{space}") mobile = " ";
       if(this.tracking) this.trackInput(mobile);
-            console.log(mobile)
     },
     async getIpsum() {
       const hipsterQuery =
@@ -221,7 +220,6 @@ export default {
 
     trackInput(mobile) {
       let key = event.key || mobile;
-      console.log(key.charCodeAt(0))
       let currentTextLength = this.p1Text.length;
       let currentLetter = this.apiText[currentTextLength];
       if (key !== currentLetter && key !== "Shift") {
