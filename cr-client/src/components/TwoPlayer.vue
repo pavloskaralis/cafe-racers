@@ -69,13 +69,8 @@ import SimpleKeyboard from "./SimpleKeyboard";
 //   broadcaster: 'pusher',
 //   key: 'cafe_racers',
 //   cluster: 'mt1',
-//   host: 'cafe-racers-backend.herokuapp.com',
-//   authEndpoint: 'cafe-racers-backend.herokuapp.com/broadcasting/auth',
-//   auth: {
-//     headers: {
-//       Accept: 'application/json',
-//     },
-//   }
+//   host: 'http://localhost:8000',
+//   authEndpoint: '/broadcasting/auth'
 // });
 
 
