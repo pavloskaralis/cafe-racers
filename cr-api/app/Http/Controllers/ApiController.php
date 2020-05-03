@@ -64,7 +64,7 @@ class ApiController extends Controller{
 
             $game->save();
             
-            event(new GameProgress($id));
+            // event(new GameProgress($id));
 
             return response()->json([
                 "message" => "records updated successfully"
