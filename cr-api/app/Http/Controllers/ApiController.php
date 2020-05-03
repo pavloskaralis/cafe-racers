@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+require base_path('vendor') . '/autoload.php';
 
 use Illuminate\Http\Request;
 use App\Events\GameProgress;
 use App\Game;
+use Pusher\Pusher;
 
 class ApiController extends Controller{
     public function getAllGames() {
@@ -65,7 +67,9 @@ class ApiController extends Controller{
             $game->save();
             
             // event(new GameProgress($id));
-
+            $pusher = new Pusher("8b8536a64ebaf54f9ce4", "d81527383c7d1f614914", "994136", array('cluster' => 'us2'));
+            $pusher->trigger('my-channel', 'my-event', $game);
+            
             return response()->json([
                 "message" => "records updated successfully"
             ], 200);

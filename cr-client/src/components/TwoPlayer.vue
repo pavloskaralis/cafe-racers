@@ -61,19 +61,6 @@ import Letter from "./Letter";
 import Button from "./Button";
 import SimpleKeyboard from "./SimpleKeyboard";
 
-// import Echo from 'laravel-echo';
- 
-// window.Pusher = require('pusher-js');
-
-// window.Echo = new Echo({
-//   broadcaster: 'pusher',
-//   key: 'cafe_racers',
-//   cluster: 'mt1',
-//   host: 'http://localhost:8000',
-//   authEndpoint: '/broadcasting/auth'
-// });
-
-
 export default {
   name: "two-player",
   components: {
@@ -130,14 +117,7 @@ export default {
         this.prompt = "Waiting For Other Player";
       }
     },
-    // async apiText() {
-    //   const url = `http://localhost:8000/api/games/${this.id}`;
-    //   const request = {
-    //     api_text: this.apiText,
-    //   };
-    //   //prevent 2 requests
-    //   if(this.userIs === "player1") await this.$axios.put(url, request);
-    // },
+
     async time() {
       const url = `http://localhost:8000/api/games/${this.id}`;
       const request = {
@@ -528,10 +508,10 @@ export default {
       let scrollHeight = lHeight - tbHeight;
       if (scrollHeight > 80) textBody.scrollTop += remount ? scrollHeight - 20 : 25;
     },
-    async updateGame() {
-      const url = `http://localhost:8000/api/games/${this.id}`;
-      const response = await this.$axios.get(url);
-      const data = response.data[0];
+    async updateGame(data) {
+      // const url = `http://localhost:8000/api/games/${this.id}`;
+      // const response = await this.$axios.get(url);
+      // const data = response.data[0];
       // console.log("checking")
       if (this.player1 !== data.player1) this.player1 = data.player1;
       if (this.player2 !== data.player2) this.player2 = data.player2;
@@ -554,19 +534,17 @@ export default {
     await this.getGame();
     if(this.tracking)this.autoScroll(true); 
 
-    this.updater = setInterval(()=> {
-      this.updateGame();
-    },250)
-    // window.Echo.channel('game')
-    //   .listen('GameProgress', (e) => {
-    //     console.log(e)
-    //   });
+    let pusher = new Pusher('8b8536a64ebaf54f9ce4', {
+        cluster: 'us2'
+    });
+    let channel = pusher.subscribe('my-channel')
+    channel.bind('my-event', (data)=> this.updateGame(data));
+
   },
   updated() {
     // console.log("updating") 
   },
   beforeDestroy() {
-    clearInterval(this.updater);
     // console.log("destroying")
     if (this.end && this.userIs !== "unknown") {
       const url = `http://localhost:8000/api/games/${this.id}`;
