@@ -1,4 +1,5 @@
 Live Link: https://cafe-racers.herokuapp.com/
+
 Purpose: Café Racers is a live-update typing game where 2 players race to copy a randomly generated text block. The app is café themed, displaying each user’s progress via a coffee cup being sipped. Players can also view a display of their current WPM typing speed, and have access to an AI mode with 3 difficulty settings. 
 
 Technologies: Vue, Vue Router, Vuex, Laravel, MySQL, Pusher, JWT, SCSS
